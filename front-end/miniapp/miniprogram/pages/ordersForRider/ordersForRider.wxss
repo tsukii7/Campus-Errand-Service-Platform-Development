@@ -1,0 +1,55 @@
+/* pages/ordersForUser/ordersForUser.wxss */
+.navbar{
+  height: 80rpx;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  line-height: 80rpx;
+  background: #f7f7f7;
+  font-size: 16px;
+  white-space: nowrap;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  border: 1rpx solid #efefef;
+}
+
+.navbar .item{
+  width: 20%;
+  display: inline-block;
+  text-align: center;
+  line-height: 60rpx;
+}
+.navbar .item.active{
+  color: orange;
+  font-weight: bold;
+}
+.navbar .item.active::after{
+  content: '';
+  display: block;
+  position: relative;
+  height: 10rpx;
+  background: #FFCC00;
+}
+/* .orderList {
+  position: relative;
+  top: 80rpx;
+  height: 10rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+} */
+.orderListItem {
+  width: 700rpx;
+  height: 200rpx;
+  margin-top: 20rpx;
+  background-color: #ffffff;
+  border-top-left-radius: 50rpx;
+  box-shadow: 1rpx 1rpx 10rpx 1rpx grey;
+}
+.itemStatus image{
+  width: 70rpx;
+  height: 70rpx;
+}

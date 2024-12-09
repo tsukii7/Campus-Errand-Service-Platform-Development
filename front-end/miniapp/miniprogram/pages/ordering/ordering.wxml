@@ -1,0 +1,27 @@
+<!--pages/ordering/ordering.wxml-->
+<swiper indicator-dots circular autoplay="true" interval="5000">
+  <swiper-item class="swiper_item" wx:for="{{swiperList}}" wx:key="id">
+    <image src="{{item.image}}" mode=""/>
+  </swiper-item>
+</swiper>
+
+<view class="ordering_container">
+  <view class="user_info">
+    <navigator class="user_avatar" url="/pages/user/user" open-type="switchTab">
+      <image src="{{user.avatar}}" mode=""/>
+    </navigator>
+    <navigator class="user_name" url="/pages/user/user" open-type="switchTab">
+      {{user.name}}
+    </navigator>
+  </view>
+  <view class="Waimai" bindtap="takeoutOrder">
+    <image src="https://i.postimg.cc/FF0rkNgh/shop.png" mode=""/>
+    <text>外卖代取</text>
+  </view>
+  <view class="Kuaidi" bindtap="deliveryOrder">
+    <text>快递代取</text>
+  </view>  
+  <view class="Shansong" bindtap="flashOrder">
+    <text>闪送服务</text>
+  </view>
+</view>

@@ -1,0 +1,93 @@
+/* pages/addAddress/addAddress.wxss */
+/* 最大的父元素 */
+.v1{
+    display: block;
+    position:absolute;
+    height: 100%;
+    width: 100%;
+    background: #efefef;
+    
+  }
+  /* 白色区域 */
+  .v1 .v2{
+    position: relative;
+    margin-top: 50rpx;
+    left: 50rpx; 
+    width: 645rpx;
+    height: 1100rpx;
+    background: #FFFFFF;
+    border-radius: 50rpx;
+  }
+  /* 白色区域内的外我的收货地址文本 */
+  .v1 .v2 .dltext{
+    margin-top: 50rpx;
+    position: absolute;
+    margin-left: 170rpx;
+    width: 400rpx;
+    height: 100rpx;
+    font-size: 50rpx;
+    font-family: Helvetica;
+    color: #000000;
+    line-height: 100rpx;
+    letter-spacing: 2rpx;
+  }
+
+  .v1 .v2 .receiver{
+    margin: 100px 20px; 
+    position: absolute;
+    width: 85%;
+    font-size: 15px; 
+    color: #404040;
+  }  
+
+  .receiver input{
+    margin: 5px 0px; 
+  }  
+
+  .v1 .v2 .phone{
+    margin: 200px 20px; 
+    position: absolute;
+    width: 85%;
+    font-size: 15px; 
+    color: #404040;
+  }  
+
+  .phone input{
+    margin: 5px 0px; 
+  }  
+
+  .v1 .v2 .address{
+    margin: 300px 20px; 
+    position: absolute;
+    width: 85%;
+    font-size: 15px; 
+    color: #404040;
+  }  
+
+  .address input{
+    margin: 5px 0px; 
+  }  
+
+
+  .v1 .v2 .separate {
+    margin: 10px 0px; 
+    height: 1rpx; 
+    background-color: #dddddd;  
+  }  
+  
+  /* 添加地址按钮容器view */
+  .v1 .v2 .addAddress{
+    position: absolute;
+    margin-top: 900rpx;
+    margin-left: 200rpx;
+    width: 250rpx; 
+    height: 60rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1rpx solid orange; 
+    border-radius: 10rpx; 
+    font-size: 15px; 
+    background-color: white;
+    color: black
+  }

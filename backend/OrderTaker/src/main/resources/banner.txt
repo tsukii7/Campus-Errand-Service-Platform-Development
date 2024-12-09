@@ -1,0 +1,10 @@
+___________           __   .__.__.__
+\__    ___/_______ __|  | _|__|__|__|
+  |    | /  ___/  |  \  |/ /  |  |  |
+  |    | \___ \|  |  /    <|  |  |  |
+  |____|/____  >____/|__|_ \__|__|__|
+             \/           \/
+${AnsiColor.CYAN}
+Application Name: ${application.title}
+Application Version: ${application.formatted-version}
+Spring Boot Version: ${spring-boot.formatted-version}

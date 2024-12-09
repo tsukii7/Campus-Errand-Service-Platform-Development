@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">ReviewController.java</span></div><h1>ReviewController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import com.example.ordertaker.entity.Review;
+import com.example.ordertaker.service.ReviewService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Tag(name = &quot;评价接口&quot;, description = &quot;/api/review&quot;)
+@RestController
+@RequestMapping(&quot;/api/review&quot;)
+<span class="nc" id="L18">public class ReviewController {</span>
+
+    @Autowired
+    private ReviewService reviewService;
+
+    /**
+     * 创建一条评价。&lt;br&gt;
+     * 若无创建时间，则默认为当前时间。&lt;br&gt;
+     * 创建后会自动更新订单的评价ID。
+     *
+     * @param review 评价，必须有{@code clientId}，{@code courierId}，{@code orderId}。且 {@code rating} 和 {@code comment} 不能同时为空
+     * @return 是否新增成功
+     */
+    @Operation(summary = &quot;创建一条评价&quot;, description = &quot;创建一条评价&quot;)
+    @Parameter(name = &quot;review&quot;, description = &quot;评价，必须有 clientId，courierId，orderId。且 rating 和 comment 不能同时为空&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/add&quot;)
+    public boolean add(@RequestBody Review review) {
+<span class="nc" id="L35">        return reviewService.save(review);</span>
+    }
+
+
+    /**
+     * 查询用户提交的所有评价
+     *
+     * @param clientId 用户的ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 用户提交的所有评价
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;用户的ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;查询用户提交的所有评价&quot;, description = &quot;查询用户提交的所有评价&quot;)
+    @GetMapping(&quot;/client&quot;)
+    public List&lt;Review&gt; getByClient(@RequestParam Long clientId,
+                                    @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                    @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L57">        return reviewService.pageByClient(clientId, current, size);</span>
+    }
+
+    /**
+     * 查询用户提交的所有评价的数量
+     *
+     * @param clientId 用户的ID
+     * @return 用户提交的所有评价的数量
+     */
+    @Parameter(name = &quot;clientId&quot;, description = &quot;用户的ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;查询用户提交的所有评价的数量&quot;, description = &quot;查询用户提交的所有评价的数量&quot;)
+    @GetMapping(&quot;count/client&quot;)
+    public long countByClientId(@RequestParam Long clientId) {
+<span class="nc" id="L70">        return reviewService.countByClientId(clientId);</span>
+    }
+
+
+    /**
+     * 查询骑手获得的所有评价
+     *
+     * @param courierId 骑手的ID
+     * @param current   当前页
+     * @param size      每页大小
+     * @return 骑手获得的所有评价
+     */
+    @Parameters({
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手的ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;查询骑手获得的所有评价&quot;, description = &quot;查询骑手获得的所有评价&quot;)
+    @GetMapping(&quot;/courier&quot;)
+    public List&lt;Review&gt; getByCourier(@RequestParam Long courierId,
+                                     @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                     @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L92">        return reviewService.pageByCourier(courierId, current, size);</span>
+    }
+
+    /**
+     * 查询骑手获得的所有评价的数量
+     *
+     * @param courierId 骑手的ID
+     * @return 骑手获得的所有评价的数量
+     */
+    @Parameter(name = &quot;courierId&quot;, description = &quot;骑手的ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;查询骑手获得的所有评价的数量&quot;, description = &quot;查询骑手获得的所有评价的数量&quot;)
+    @GetMapping(&quot;count/courier&quot;)
+    public long countByCourierId(@RequestParam Long courierId) {
+<span class="nc" id="L105">        return reviewService.countByCourierId(courierId);</span>
+    }
+
+    /**
+     * 删除一条评价
+     * &lt;br&gt;
+     * 注：删除后会自动更新订单的评价ID为 {@code null} 。
+     *
+     * @param id 评价的主键ID
+     * @return 是否删除成功
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;评价的主键ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;删除一条评价  注：删除后会自动更新订单的评价ID为 {@code null} 。&quot;, description = &quot;删除一条评价 注：删除后会自动更新订单的评价ID为 {@code null} 。&quot;)
+    @DeleteMapping(&quot;/delete&quot;)
+    public boolean delete(@RequestParam Long id) {
+<span class="nc" id="L120">        return reviewService.removeById(id);</span>
+    }
+
+    /**
+     * 更新一条评价
+     *
+     * @param review 评价，必须有 {@code id}，且 {@code comment} 和 {@code rating} 不能为空 。
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新一条评价&quot;, description = &quot;更新一条评价&quot;)
+    @Parameter(name = &quot;review&quot;, description = &quot;评价，必须有 id，且 comment 和 rating 不能为空 。&quot;, in = ParameterIn.QUERY, required = true)
+    @PatchMapping(&quot;/update&quot;)
+    public boolean update(@RequestBody Review review) {
+<span class="nc" id="L133">        return reviewService.updateReview(review.getId(), review.getComment(), review.getRating());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

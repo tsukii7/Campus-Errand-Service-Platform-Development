@@ -1,0 +1,30 @@
+<!--pages/modifyAddress/modifyAddress.wxml-->
+<view class="v1">
+ 
+ <!-- v2父容器  子view使用绝对布局 -->
+   <view class="v2">
+     <view class="dltext">我的收货地址</view>
+  
+     <!-- 地址 -->
+     <scroll-view scroll-x="false" scroll-y="true" bindscrolltolower="onScrollToLower" style="height: 88%;">
+        <view class="product-name-wrap"  wx:for="{{address}}" wx:key="key" >
+            <view class="ui-list-item-info">{{item.receiver}}
+                <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;</text> {{item.phoneNumber}}
+            </view>
+            <view class="ui-list-item-address">
+                <p>收货地址：{{item.address}}</p>
+            </view>
+            <view class="ui-list-item-del" bindtap="delAddress" data-id="{{item.id}}">
+                删除
+            </view>
+            <view class="separate"></view>
+        </view>
+    </scroll-view>
+     
+  
+     <!-- 添加地址按钮 -->
+     <view class="addAddress" bindtap="addAddress">
+      添加地址
+    </view>
+   </view>
+ </view>

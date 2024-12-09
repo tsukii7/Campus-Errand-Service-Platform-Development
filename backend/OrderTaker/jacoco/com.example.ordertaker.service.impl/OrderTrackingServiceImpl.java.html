@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderTrackingServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.service.impl</a> &gt; <span class="el_source">OrderTrackingServiceImpl.java</span></div><h1>OrderTrackingServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.ordertaker.entity.OrderTracking;
+import com.example.ordertaker.AOP.exceptionInfo.MyException;
+import com.example.ordertaker.mapper.OrderTrackingMapper;
+import com.example.ordertaker.service.OrderService;
+import com.example.ordertaker.service.OrderTrackingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+@Service
+<span class="fc" id="L19">public class OrderTrackingServiceImpl extends ServiceImpl&lt;OrderTrackingMapper, OrderTracking&gt; implements OrderTrackingService {</span>
+
+    @Lazy
+    @Autowired
+    OrderService orderService;
+
+    @Override
+    public boolean save(OrderTracking orderTracking) {
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if (orderTracking.getOrderId() == null)</span>
+<span class="nc" id="L28">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (orderTracking.getCreatedTime() == null)</span>
+<span class="nc" id="L31">            orderTracking.setCreatedTime(new Date());</span>
+
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (super.save(orderTracking))</span>
+<span class="nc" id="L34">            return orderService.updateOrderTrackingId(orderTracking.getOrderId(), orderTracking.getId());</span>
+        else
+<span class="nc" id="L36">            return false;</span>
+    }
+
+
+    @Override
+    public boolean updatePlacedTime(Long id, Date placedTime) {
+<span class="pc bpc" id="L42" title="2 of 4 branches missed.">        if (id == null || placedTime == null)</span>
+<span class="nc" id="L43">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="pc" id="L45">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L47">                        .eq(OrderTracking::getOrderId, id)</span>
+<span class="fc" id="L48">                        .set(OrderTracking::getPlacedTime, placedTime));</span>
+    }
+
+    @Override
+    public boolean updateTransitedTime(Long id, Date transitedTime) {
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">        if (id == null || transitedTime == null)</span>
+<span class="nc" id="L54">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="pc" id="L56">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L58">                        .eq(OrderTracking::getOrderId, id)</span>
+<span class="fc" id="L59">                        .set(OrderTracking::getTransitedTime, transitedTime));</span>
+    }
+
+    @Override
+    public boolean updateArrivedTime(Long id, Date arrivedTime) {
+<span class="pc bpc" id="L64" title="2 of 4 branches missed.">        if (id == null || arrivedTime == null)</span>
+<span class="nc" id="L65">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="pc" id="L67">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L69">                        .eq(OrderTracking::getOrderId, id)</span>
+<span class="fc" id="L70">                        .set(OrderTracking::getArrivedTime, arrivedTime));</span>
+    }
+
+    @Override
+    public boolean updateConfirmedTime(Long id, Date confirmedTime) {
+<span class="pc bpc" id="L75" title="2 of 4 branches missed.">        if (id == null || confirmedTime == null)</span>
+<span class="nc" id="L76">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="pc" id="L78">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L80">                        .eq(OrderTracking::getOrderId, id)</span>
+<span class="fc" id="L81">                        .set(OrderTracking::getConfirmedTime, confirmedTime));</span>
+    }
+
+    @Override
+    public boolean updateCancelledTime(Long id, Date cancelledTime) {
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        if (id == null || cancelledTime == null)</span>
+<span class="nc" id="L87">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="pc" id="L89">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L91">                        .eq(OrderTracking::getOrderId, id)</span>
+<span class="fc" id="L92">                        .set(OrderTracking::getCancelledTime, cancelledTime));</span>
+    }
+
+    @Override
+    public OrderTracking getById(Long id) {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (id == null)</span>
+<span class="nc" id="L98">            throw new MyException(&quot;订单跟踪信息不完整&quot;);</span>
+
+<span class="nc" id="L100">        return super.getById(id);</span>
+    }
+
+    @Override
+    public List&lt;OrderTracking&gt; transitting() {
+<span class="pc" id="L105">        return super.baseMapper.selectList(</span>
+                new LambdaQueryWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L107">                        .isNotNull(OrderTracking::getTransitedTime)</span>
+<span class="fc" id="L108">                        .isNull(OrderTracking::getArrivedTime)</span>
+        );
+    }
+
+    @Override
+    public List&lt;OrderTracking&gt; untransitted() {
+<span class="pc" id="L114">        return super.baseMapper.selectList(</span>
+                new LambdaQueryWrapper&lt;OrderTracking&gt;()
+<span class="fc" id="L116">                        .isNull(OrderTracking::getTransitedTime)</span>
+<span class="fc" id="L117">                        .isNotNull(OrderTracking::getCancelledTime)</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

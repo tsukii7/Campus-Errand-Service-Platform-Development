@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderTrackingController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">OrderTrackingController.java</span></div><h1>OrderTrackingController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import com.example.ordertaker.OrderTakerApplication;
+import com.example.ordertaker.entity.OrderTracking;
+import com.example.ordertaker.service.OrderTrackingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+
+@Tag(name =&quot;订单跟踪接口&quot; , description =&quot;/api/track&quot; )
+@RestController
+@RequestMapping(&quot;/api/track&quot;)
+<span class="nc" id="L18">public class OrderTrackingController {</span>
+    @Autowired
+    private OrderTrackingService orderTrackingService;
+
+    /**
+     * 创建订单跟踪记录。&lt;br&gt;
+     * 若无创建时间，则默认为当前时间。&lt;br&gt;
+     * 创建后会自动更新订单的跟踪ID。
+     *
+     * @param orderTracking 订单跟踪记录，必须有订单ID。
+     * @return 是否新增成功
+     */
+    @Operation(summary = &quot;创建订单跟踪记录。 若无创建时间，则默认为当前时间。 创建后会自动更新订单的跟踪ID。&quot;, description = &quot;创建订单跟踪记录。 若无创建时间，则默认为当前时间。 创建后会自动更新订单的跟踪ID。&quot;)
+    @Parameter(name = &quot;orderTracking&quot;, description = &quot;订单跟踪记录，必须有订单ID。&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;&quot;)
+    public boolean add(@RequestBody OrderTracking orderTracking) {
+<span class="nc" id="L34">        return orderTrackingService.save(orderTracking);</span>
+    }
+
+    /**
+     * 获取订单跟踪记录。
+     *
+     * @param id 订单跟踪记录ID
+     * @return 订单跟踪记录
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;订单跟踪记录ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取订单跟踪记录。&quot;, description = &quot;获取订单跟踪记录。&quot;)
+    @GetMapping(&quot;&quot;)
+    public OrderTracking getById(@RequestParam Long id) {
+<span class="nc" id="L47">        return orderTrackingService.getById(id);</span>
+    }
+
+    /**
+     * 更新下单时间。
+     *
+     * @param orderTracking 订单跟踪记录，必须有id和placedTime
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新下单时间。&quot;, description = &quot;更新下单时间。&quot;)
+    @Parameter(name = &quot;orderTracking&quot;, description = &quot;订单跟踪记录，必须有id和placedTime&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/place&quot;)
+    public boolean place(@RequestBody OrderTracking orderTracking) {
+<span class="nc" id="L60">        return orderTrackingService.updatePlacedTime(orderTracking.getId(), orderTracking.getPlacedTime());</span>
+    }
+
+    /**
+     * 更新开始配送时间。
+     *
+     * @param orderTracking 订单跟踪记录，必须有id和transitedTime
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新开始配送时间。&quot;, description = &quot;更新开始配送时间。&quot;)
+    @Parameter(name = &quot;orderTracking&quot;, description = &quot;订单跟踪记录，必须有id和transitedTime&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/transit&quot;)
+    public boolean transit(@RequestBody OrderTracking orderTracking) {
+<span class="nc" id="L73">        return orderTrackingService.updateTransitedTime(orderTracking.getId(),orderTracking.getTransitedTime());</span>
+    }
+
+    /**
+     * 更新送达时间。
+     *
+     * @param orderTracking 订单跟踪记录，必须有id和arrivedTime
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新送达时间。&quot;, description = &quot;更新送达时间。&quot;)
+    @Parameter(name = &quot;orderTracking&quot;, description = &quot;订单跟踪记录，必须有id和arrivedTime&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/arrive&quot;)
+    public boolean arrive(@RequestBody OrderTracking orderTracking) {
+<span class="nc" id="L86">        return orderTrackingService.updateArrivedTime(orderTracking.getId(), orderTracking.getArrivedTime());</span>
+    }
+
+    /**
+     * 更新确认时间。
+     *
+     * @param orderTracking 订单跟踪记录，必须有id和confirmedTime
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新确认时间。&quot;, description = &quot;更新确认时间。&quot;)
+    @Parameter(name = &quot;orderTracking&quot;, description = &quot;订单跟踪记录，必须有id和confirmedTime&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/confirm&quot;)
+    public boolean confirm(@RequestBody OrderTracking orderTracking) {
+<span class="nc" id="L99">        return orderTrackingService.updateConfirmedTime(orderTracking.getId(), orderTracking.getConfirmedTime());</span>
+    }
+
+    /**
+     * 更新取消时间。
+     *
+     * @param orderTracking 订单跟踪记录，必须有id和cancelledTime
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新取消时间。&quot;, description = &quot;更新取消时间。&quot;)
+    @Parameter(name = &quot;orderTracking&quot;, description = &quot;订单跟踪记录，必须有id和cancelledTime&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/cancel&quot;)
+    public boolean cancel(@RequestBody OrderTracking orderTracking) {
+<span class="nc" id="L112">        return orderTrackingService.updateCancelledTime(orderTracking.getId(), orderTracking.getCancelledTime());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

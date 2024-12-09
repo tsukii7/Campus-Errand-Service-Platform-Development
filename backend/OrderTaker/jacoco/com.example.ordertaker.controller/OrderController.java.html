@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">OrderController.java</span></div><h1>OrderController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.ordertaker.constant.CurrentStatusEnum;
+import com.example.ordertaker.entity.Order;
+import com.example.ordertaker.entity.Review;
+import com.example.ordertaker.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.example.ordertaker.util.Util.date2String;
+
+@Tag(name = &quot;订单接口&quot;, description = &quot;/api/order&quot;)
+@RestController
+@RequestMapping(&quot;/api/order&quot;)
+@EnableScheduling
+<span class="nc" id="L26">public class OrderController {</span>
+    @Autowired
+    private OrderService orderService;
+
+    /**
+     * 定时任务
+     * 每一分钟扫描一次Order表更新查看订单是否超时
+     */
+    @Scheduled(fixedRate = 60000)
+    public void checkStatus() {
+        // System.out.println(&quot;hello world!!!&quot;);
+<span class="nc" id="L37">        orderService.checkStatus();</span>
+<span class="nc" id="L38">    }</span>
+    /**
+     * 获取所有待接单订单数量
+     *
+     * @return 待接单订单数量
+     */
+    @Operation(summary = &quot;获取待接单订单数量&quot;, description = &quot;获取待接单订单数量&quot;)
+    @GetMapping(&quot;/count/unaccepted&quot;)
+    public long countUnacceptedAll() {
+<span class="nc" id="L47">        return orderService.count(new LambdaQueryWrapper&lt;Order&gt;()</span>
+<span class="nc" id="L48">                .eq(Order::getCurrentStatus, CurrentStatusEnum.PLACED));</span>
+    }
+
+    /**
+     * 根据客户ID获取已确认订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 已确认订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取已确认订单&quot;, description = &quot;根据客户ID获取已确认订单&quot;)
+    @GetMapping(&quot;/client/confirmed&quot;)
+    public Object confirmed(@RequestParam Long clientId,
+                            @RequestParam(defaultValue = &quot;1&quot;) long current,
+                            @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L69">        return orderService.pageConfirmedByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 获取已完成订单数量
+     *
+     * @param clientId 客户ID
+     * @return 已完成订单数量
+     */
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取已完成订单数量&quot;, description = &quot;获取已完成订单数量&quot;)
+    @GetMapping(&quot;/count/client/confirmed&quot;)
+    public long countFinished(@RequestParam Long clientId) {
+<span class="nc" id="L82">        return orderService.count(new LambdaQueryWrapper&lt;Order&gt;()</span>
+<span class="nc" id="L83">                .eq(Order::getClientId, clientId)</span>
+<span class="nc" id="L84">                .and(wrapper -&gt; wrapper</span>
+<span class="nc" id="L85">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.CONFIRMED)</span>
+                ));
+    }
+
+    /**
+     * 根据客户ID获取已取消订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 已取消订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取已取消订单&quot;, description = &quot;根据客户ID获取已取消订单&quot;)
+    @GetMapping(&quot;/client/cancelled&quot;)
+    public Object cancelled(@RequestParam Long clientId,
+                            @RequestParam(defaultValue = &quot;1&quot;) long current,
+                            @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L107">        return orderService.pageCancelledByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 获取已取消订单数量
+     *
+     * @param clientId 客户ID
+     * @return 已取消订单数量
+     */
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取已取消订单数量&quot;, description = &quot;获取已取消订单数量&quot;)
+    @GetMapping(&quot;/count/client/cancelled&quot;)
+    public long countCanceled(@RequestParam Long clientId) {
+<span class="nc" id="L120">        return orderService.count(new LambdaQueryWrapper&lt;Order&gt;()</span>
+<span class="nc" id="L121">                .eq(Order::getClientId, clientId)</span>
+<span class="nc" id="L122">                .and(wrapper -&gt; wrapper</span>
+<span class="nc" id="L123">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.CANCELLED)</span>
+                ));
+    }
+
+    /**
+     * 不管状态，根据客户ID获取所有类别的订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 不分类、所有类别的订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;不管状态，根据客户ID获取所有类别的订单&quot;, description = &quot;不管状态，根据客户ID获取所有类别的订单&quot;)
+    @GetMapping(&quot;/client/all&quot;)
+    public List&lt;Order&gt; allByClientId(@RequestParam Long clientId,
+                                     @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                     @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L145">        return orderService.pageByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 根据客户ID获取订单数量
+     *
+     * @param clientId 客户ID
+     * @return 订单数量
+     */
+    @Operation(summary = &quot;根据客户ID获取订单数量&quot;, description = &quot;根据客户ID获取订单数量&quot;)
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @GetMapping(&quot;/count/client/all&quot;)
+    public long countByClientId(@RequestParam Long clientId) {
+<span class="nc" id="L158">        return orderService.countByClientId(clientId);</span>
+    }
+
+    /**
+     * 根据客户ID获取外卖订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 外卖订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取外卖订单&quot;, description = &quot;根据客户ID获取外卖订单&quot;)
+    @GetMapping(&quot;/client/takeout&quot;)
+    public List&lt;Order&gt; takeout(@RequestParam Long clientId,
+                               @RequestParam(defaultValue = &quot;1&quot;) long current,
+                               @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L179">        return orderService.pageTakeoutByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 根据客户ID获取外卖订单数量
+     *
+     * @param clientId 客户ID
+     * @return 外卖订单数量
+     */
+    @Operation(summary = &quot;根据客户ID获取外卖订单数量&quot;, description = &quot;根据客户ID获取外卖订单数量&quot;)
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @GetMapping(&quot;/count/client/takeout&quot;)
+    public long countTakeout(@RequestParam Long clientId) {
+<span class="nc" id="L192">        return orderService.countTakeoutByClientId(clientId);</span>
+    }
+
+    /**
+     * 根据客户ID获取快递订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 快递订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取快递订单&quot;, description = &quot;根据客户ID获取快递订单&quot;)
+    @GetMapping(&quot;/client/express&quot;)
+    public List&lt;Order&gt; express(@RequestParam Long clientId,
+                               @RequestParam(defaultValue = &quot;1&quot;) long current,
+                               @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L213">        return orderService.pageExpressByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 根据客户ID获取快递订单数量
+     *
+     * @param clientId 客户ID
+     * @return 快递订单数量
+     */
+    @Operation(summary = &quot;根据客户ID获取快递订单数量&quot;, description = &quot;根据客户ID获取快递订单数量&quot;)
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @GetMapping(&quot;/count/client/express&quot;)
+    public long countExpress(@RequestParam Long clientId) {
+<span class="nc" id="L226">        return orderService.countExpressByClientId(clientId);</span>
+    }
+
+    /**
+     * 根据客户ID获取闪送订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 闪送订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取闪送订单&quot;, description = &quot;根据客户ID获取闪送订单&quot;)
+    @GetMapping(&quot;/client/flash&quot;)
+    public List&lt;Order&gt; flash(@RequestParam Long clientId,
+                             @RequestParam(defaultValue = &quot;1&quot;) long current,
+                             @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L247">        return orderService.pageFlashByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 根据客户ID获取闪送订单数量
+     *
+     * @param clientId 客户ID
+     * @return 闪送订单数量
+     */
+    @Operation(summary = &quot;根据客户ID获取闪送订单数量&quot;, description = &quot;根据客户ID获取闪送订单数量&quot;)
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @GetMapping(&quot;/count/client/flash&quot;)
+    public long countFlash(@RequestParam Long clientId) {
+<span class="nc" id="L260">        return orderService.countFlashByClientId(clientId);</span>
+    }
+
+    /**
+     * 根据客户ID获取待接单订单
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 这个客户的待接单订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取待接单订单&quot;, description = &quot;根据客户ID获取待接单订单&quot;)
+    @GetMapping(&quot;/client/unaccepted&quot;)
+    public List&lt;Order&gt; unacceptedByClientId(@RequestParam Long clientId,
+                                            @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                            @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L281">        return orderService.unacceptedByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 获取待接单订单数量
+     *
+     * @param clientId 客户ID
+     * @return 待接单订单数量
+     */
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取待接单订单数量&quot;, description = &quot;获取待接单订单数量&quot;)
+    @GetMapping(&quot;/count/client/unaccepted&quot;)
+    public long countUnacceptedClient(@RequestParam Long clientId) {
+<span class="nc" id="L294">        return orderService.count(new LambdaQueryWrapper&lt;Order&gt;()</span>
+<span class="nc" id="L295">                .eq(Order::getClientId, clientId)</span>
+<span class="nc" id="L296">                .eq(Order::getCurrentStatus, CurrentStatusEnum.PLACED));</span>
+    }
+
+
+    /**
+     * 获取所有待接单订单
+     *
+     * @param current 当前页
+     * @param size    每页大小
+     * @return 所有待接单订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;获取所有待接单订单&quot;, description = &quot;获取所有待接单订单&quot;)
+    @GetMapping(&quot;/courier/unaccepted&quot;)
+    public List&lt;Order&gt; unacceptedAll(@RequestParam(defaultValue = &quot;1&quot;) long current,
+                                     @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L315">        return orderService.unacceptedAll(current, size);</span>
+    }
+
+    /**
+     * 根据客户ID获取待收货订单（待确认订单）
+     *
+     * @param clientId 客户ID
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 待收货订单（待确认订单）
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据客户ID获取待收货订单（待确认订单）&quot;, description = &quot;根据客户ID获取待收货订单（待确认订单）&quot;)
+    @GetMapping(&quot;/client/unconfirmed&quot;)
+    public Object unconfirmed(@RequestParam Long clientId,
+                              @RequestParam(defaultValue = &quot;1&quot;) long current,
+                              @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L336">        return orderService.pageUnconfirmedByClientId(clientId, current, size);</span>
+    }
+
+    /**
+     * 获取待收货订单数量
+     *
+     * @param clientId 客户ID
+     * @return 待收货订单数量
+     */
+    @Parameter(name = &quot;clientId&quot;, description = &quot;客户ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取待收货订单数量&quot;, description = &quot;获取待收货订单数量&quot;)
+    @GetMapping(&quot;/count/client/unconfirmed&quot;)
+    public long countUnconfirmed(@RequestParam Long clientId) {
+<span class="nc" id="L349">        return orderService.countUnconfirmedByClientId(clientId);</span>
+    }
+
+
+    /**
+     * 不管状态，根据骑手ID获取所有类别的订单
+     *
+     * @param courierId 骑手ID
+     * @param current   当前页
+     * @param size      每页大小
+     * @return 不分类、所有类别的订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;不管状态，根据骑手ID获取所有类别的订单&quot;, description = &quot;不管状态，根据骑手ID获取所有类别的订单&quot;)
+    @GetMapping(&quot;/courier/all&quot;)
+    public List&lt;Order&gt; allByCourierId(@RequestParam Long courierId,
+                                      @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                      @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L371">        return orderService.pageByCourierId(courierId, current, size);</span>
+    }
+
+    /**
+     * 根据骑手id获取负责的订单数量
+     *
+     * @param courierId 骑手ID
+     * @return 这个骑手负责的订单数量
+     */
+    @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;根据骑手id获取负责的订单数量&quot;, description = &quot;根据骑手id获取负责的订单数量&quot;)
+    @GetMapping(&quot;/count/courier/all&quot;)
+    public long countByCourierId(@RequestParam Long courierId) {
+<span class="nc" id="L384">        return orderService.countByCourierId(courierId);</span>
+    }
+
+
+    /**
+     * 根据骑手ID获取待取货订单
+     *
+     * @param courierId 骑手ID
+     * @param current   当前页
+     * @param size      每页大小
+     * @return 待取货订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据骑手ID获取待取货订单&quot;, description = &quot;根据骑手ID获取待取货订单&quot;)
+    @GetMapping(&quot;/courier/untransitted&quot;)
+    public List&lt;Order&gt; untransittedByCourier(@RequestParam Long courierId,
+                                             @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                             @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L406">        return orderService.pageUntransittedByCourierId(courierId, current, size);</span>
+    }
+
+
+    /**
+     * 根据骑手ID获取待取货订单数量
+     *
+     * @param courierId 骑手ID
+     * @return 待取货订单数量
+     */
+    @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;根据骑手ID获取待取货订单数量&quot;, description = &quot;根据骑手ID获取待取货订单数量&quot;)
+    @GetMapping(&quot;/count/courier/untransitted&quot;)
+    public long countUntransittedByCourier(@RequestParam Long courierId) {
+<span class="nc" id="L420">        return orderService.countUntransittedByCourierId(courierId);</span>
+    }
+
+    /**
+     * 根据骑手ID获取待送达订单
+     *
+     * @param courierId 骑手ID
+     * @param current   当前页
+     * @param size      每页大小
+     * @return 待送达订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据骑手ID获取待送达订单&quot;, description = &quot;根据骑手ID获取待送达订单&quot;)
+    @GetMapping(&quot;/courier/transitting&quot;)
+    public List&lt;Order&gt; transittingByCourier(@RequestParam Long courierId,
+                                            @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                            @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L441">        return orderService.pageTransittingByCourierId(courierId, current, size);</span>
+    }
+
+    /**
+     * 根据骑手ID获取配送中订单数量
+     *
+     * @param courierId 骑手ID
+     * @return 配送中订单数量
+     */
+    @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;根据骑手ID获取配送中订单数量&quot;, description = &quot;根据骑手ID获取配送中订单数量&quot;)
+    @GetMapping(&quot;/count/courier/transitting&quot;)
+    public long countTransittingByCourier(@RequestParam Long courierId) {
+<span class="nc" id="L454">        return orderService.countTransittingByCourierId(courierId);</span>
+    }
+
+    /**
+     * 根据骑手ID获取已送达订单
+     *
+     * @param courierId 骑手ID
+     * @param current   当前页
+     * @param size      每页大小
+     * @return 已送达订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据骑手ID获取已送达订单&quot;, description = &quot;根据骑手ID获取已送达订单&quot;)
+    @GetMapping(&quot;/courier/arrived&quot;)
+    public List&lt;Order&gt; arrivedByCourier(@RequestParam Long courierId,
+                                        @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                        @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L475">        return orderService.pageArrivedByCourierId(courierId, current, size);</span>
+    }
+
+    /**
+     * 根据骑手ID获取已送达订单数量
+     *
+     * @param courierId 骑手ID
+     * @return 已送达订单数量
+     */
+    @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;根据骑手ID获取已送达订单数量&quot;, description = &quot;根据骑手ID获取已送达订单数量&quot;)
+    @GetMapping(&quot;/count/courier/arrived&quot;)
+    public long countArrivedByCourier(@RequestParam Long courierId) {
+<span class="nc" id="L488">        return orderService.countArrivedByCourierId(courierId);</span>
+    }
+
+    /**
+     * 根据骑手ID获取已完成订单
+     *
+     * @param courierId 骑手ID
+     * @param current   当前页
+     * @param size      每页大小
+     * @return 已完成订单
+     */
+    @Parameters({
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;根据骑手ID获取已完成订单&quot;, description = &quot;根据骑手ID获取已完成订单&quot;)
+    @GetMapping(&quot;/courier/confirmed&quot;)
+    public List&lt;Order&gt; confirmedByCourier(@RequestParam Long courierId,
+                                          @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                          @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L509">        return orderService.pageConfirmedByCourierId(courierId, current, size);</span>
+    }
+
+    /**
+     * 根据骑手ID获取已完成订单数量
+     *
+     * @param courierId 骑手ID
+     * @return 已完成订单数量
+     */
+    @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;根据骑手ID获取已完成订单数量&quot;, description = &quot;根据骑手ID获取已完成订单数量&quot;)
+    @GetMapping(&quot;/count/courier/confirmed&quot;)
+    public long countConfirmedByCourier(@RequestParam Long courierId) {
+<span class="nc" id="L522">        return orderService.countConfirmedByCourierId(courierId);</span>
+    }
+
+    /**
+     * 更新订单的当前状态
+     *
+     * @param order 订单，必须有 id, currentStatus, courierId
+     * @return 如果更新成功，则返回当前时间。否则抛出异常。
+     */
+    @Operation(summary = &quot;更新订单的当前状态&quot;, description = &quot;更新订单的当前状态&quot;)
+    @Parameter(name = &quot;order&quot;, description = &quot;订单&quot;, in = ParameterIn.DEFAULT, required = true)
+    @PatchMapping(&quot;/status&quot;)
+    public String status(@RequestBody Order order) {
+<span class="nc" id="L535">        return date2String(orderService.updateStatus(order.getId(), order.getCurrentStatus(), order.getCourierId()));</span>
+    }
+
+    /**
+     * 更新订单的评论ID。&lt;br/&gt;
+     * 注：创建评论时会同步修改订单的评论ID，一般来说该方法不会被调用，请保证调用时的参数正确性。
+     *
+     * @param review 评论，必须有id（评论的主键ID）和orderId（对应的订单主键ID）
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新订单的评论ID。 注：创建评论时会同步修改订单的评论ID，一般来说该方法不会被调用，请保证调用时的参数正确性。&quot;, description = &quot;更新订单的评论ID。&lt;br/&gt; 注：创建评论时会同步修改订单的评论ID，一般来说该方法不会被调用，请保证调用时的参数正确性。&quot;)
+    @PatchMapping(&quot;/review&quot;)
+    public boolean reviewId(@RequestBody Review review) {
+<span class="nc" id="L548">        return orderService.updateReviewId(review.getOrderId(), review.getId());</span>
+    }
+
+    /**
+     * 更新订单的支付ID。&lt;br/&gt;
+     * 注：创建支付记录时会同步修改订单的支付ID，一般来说该方法不会被调用，请保证调用时的参数正确性。
+     *
+     * @param order 订单，必须有id（订单的主键ID）和paymentId（对应的支付记录主键ID）
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新订单的支付ID。 注：创建支付记录时会同步修改订单的支付ID，一般来说该方法不会被调用，请保证调用时的参数正确性。&quot;, description = &quot;更新订单的支付ID。&lt;br/&gt; 注：创建支付记录时会同步修改订单的支付ID，一般来说该方法不会被调用，请保证调用时的参数正确性。&quot;)
+    @PatchMapping(&quot;/payment&quot;)
+    public boolean paymentId(@RequestBody Order order) {
+<span class="nc" id="L561">        return orderService.updatePaymentId(order.getId(), order.getPaymentId());</span>
+    }
+
+    /**
+     * 新建订单
+     * &lt;br&gt;
+     * 若没有当前状态，则自动填充为已下单。
+     * &lt;br&gt;
+     * 新建订单后会自动创建订单跟踪ID。
+     *
+     * @param order 订单，必须有客户ID，骑手ID，收货地址ID
+     * @return 是否插入成功
+     */
+    @Operation(summary = &quot;新建订单。若没有当前状态，则自动填充为已下单。 新建订单后会自动创建订单跟踪ID。&quot;, description = &quot;新建订单 &lt;br&gt; 若没有当前状态，则自动填充为已下单。 &lt;br&gt; 新建订单后会自动创建订单跟踪ID。&quot;)
+    @Parameter(name = &quot;order&quot;, description = &quot;订单&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/add&quot;)
+    public boolean add(@RequestBody Order order) {
+<span class="nc" id="L578">        return orderService.save(order);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PaymentController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">PaymentController.java</span></div><h1>PaymentController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import com.example.ordertaker.constant.PaymentStatusEnum;
+import com.example.ordertaker.entity.Payment;
+import com.example.ordertaker.service.PaymentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+
+@Tag(name = &quot;支付接口&quot;, description = &quot;/api/payment&quot;)
+@RestController
+@RequestMapping(&quot;/api/payment&quot;)
+<span class="nc" id="L17">public class PaymentController {</span>
+
+    @Autowired
+    private PaymentService paymentService;
+
+
+    /**
+     * 创建支付记录。
+     * &lt;br&gt;
+     * 若没有当前状态，则自动填充为待支付。
+     * &lt;br&gt;
+     * 若没有创建时间，则自动填充为当前时间。
+     * &lt;br&gt;
+     * 创建支付记录后会自动更新订单状态。
+     *
+     * @param payment 支付记录。必须有交易ID，订单ID
+     * @return 是否创建成功
+     */
+    @Operation(summary = &quot;创建支付记录。若没有当前状态，则自动填充为待支付。若没有创建时间，则自动填充为当前时间。创建支付记录后会自动更新订单状态。&quot;, description = &quot;创建支付记录。 &lt;br&gt; 若没有当前状态，则自动填充为待支付。 &lt;br&gt; 若没有创建时间，则自动填充为当前时间。 &lt;br&gt; 创建支付记录后会自动更新订单状态。&quot;)
+    @Parameter(name = &quot;payment&quot;, description = &quot;支付记录。必须有交易ID，订单ID&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/add&quot;)
+    public boolean add(@RequestBody Payment payment) {
+<span class="nc" id="L39">        return paymentService.save(payment);</span>
+    }
+
+    /**
+     * 更新支付记录
+     *
+     * @param payment 支付记录，必须有ID和状态
+     * @return 是否更新成功
+     */
+    @Operation(summary = &quot;更新支付记录&quot;, description = &quot;更新支付记录&quot;)
+    @Parameter(name = &quot;payment&quot;, description = &quot;支付记录，必须有ID和状态&quot;, in = ParameterIn.QUERY, required = true)
+    @PatchMapping(&quot;/update&quot;)
+    public boolean update(@RequestBody Payment payment) {
+<span class="nc" id="L52">        return paymentService.updateStatus(payment.getId(), payment.getStatus());</span>
+    }
+
+    /**
+     * 获取支付状态
+     *
+     * @param id 支付记录ID
+     * @return 支付状态
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;支付记录ID&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取支付状态&quot;, description = &quot;获取支付状态&quot;)
+    @GetMapping(&quot;/status&quot;)
+    public PaymentStatusEnum getStatus(@RequestParam Long id) {
+<span class="nc" id="L65">        return paymentService.getStatus(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

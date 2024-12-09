@@ -1,0 +1,63 @@
+<!--pages/takeoutOrder/takeoutOrder.wxml-->
+<view class="v1">
+
+<!-- v2父容器  子view使用绝对布局 -->
+  <view class="v2">
+    <view class="dltext">外卖代取下单</view>
+
+    <!-- 订单描述（不多于10个字） -->
+    <view class="descriptionCs">
+      <image src="https://i.postimg.cc/Kzzdssrt/orders.png" class="ph"></image>
+      <input placeholder="订单描述 (不多于10字)" bindinput="onInputDescription"/>
+    </view>
+    <!-- 取餐地址（下拉框：六号门、五号门等） -->
+    <view class="pickupAddressCs">
+      <image src="https://i.postimg.cc/L6Cvx6QQ/address.png" class="pa"></image>
+      <picker bindchange="onPickupAddressChange" value="{{addressId}}" range="{{address}}">
+      <view>取餐地址：{{address[addressId]}}</view>
+      </picker>
+    </view>
+    <!-- 送餐地址（下拉框） -->
+    <view class="deliveryAddressCs">
+      <image src="https://i.postimg.cc/bJh0gTWp/location.png" class="pd"></image>
+      <picker bindchange="onDeliveryAddressChange" value="{{dAddressId}}" range="{{dAddress}}" >
+      <view>送餐地址：{{dAddress[dAddressId]}}</view>
+      </picker>
+    </view>
+    <!-- 外卖预计到达时间 -->
+    <view class="estimateTimeCs">
+      <image src="https://i.postimg.cc/MKCYXq5n/time1.png" class="pe"></image>
+      <date-time-picker mode="time" bindchange="onEstimateTimeChange" value="{{value}}" >
+      <view>外卖预计到达：{{estimateTime}}</view>
+      </date-time-picker>
+    </view>
+    <!-- 期望送达时间 -->
+    <view class="expectedTimeCs">
+      <image src="https://i.postimg.cc/zGfRJMZy/time2.png" class="pe"></image>
+      <date-time-picker mode="time" bindchange="onExpectedTimeChange" value="{{value}}" >
+      <view>期望到达时间：{{expectedTime}}</view>
+      </date-time-picker>
+    </view>
+    <!-- 商品价格 -->
+    <view class="priceCs">
+      <image src="https://i.postimg.cc/sfpjbJLb/price.png" class="pp"></image>
+      <input placeholder="请输入商品价格" bindinput="onInputPrice"/>
+    </view>
+    <!-- 餐厅名称 -->
+    <view class="restaurantCs">
+      <image src="https://i.postimg.cc/FFGqfdk7/restaurant.png" class="pr"></image>
+      <input placeholder="请输入餐厅名称" bindinput="onInputRestaurant"/>
+    </view>
+    <!-- 费用 -->
+    <view class="feeCs">
+      <image src="https://i.postimg.cc/fLrFk1kB/fee.png" class="pf"></image>
+      <input placeholder="支付骑手费用" bindinput="onInputFee"/>
+    </view>
+
+    <!-- 下单按钮 -->
+    <view class="order">
+      <button class="btn-dl" type="primary" style="width: 350rpx; height: 68rpx; display: flex; box-sizing: border-box; left: 0rpx; top: -43rpx; position: relative; align-items: center; justify-content: center;" bindtap="order">下单</button>
+    </view>
+  </view>
+
+</view>

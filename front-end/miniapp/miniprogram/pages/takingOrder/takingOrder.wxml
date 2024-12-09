@@ -1,0 +1,55 @@
+<wxs module="sliceTime" />
+
+<swiper indicator-dots circular autoplay="true" interval="5000" style="height: 400rpx;">
+  <swiper-item class="swiper_item" wx:for="{{swiperList}}" wx:key="id">
+    <image src="{{item.image}}" mode="" style="width: 100%; height: 100%;"/>
+  </swiper-item>
+</swiper>
+
+<view class="v1" style="display: block; width: 100%">
+
+  <!-- 左边栏 -->
+  <view class="types" style="width: 130rpx; height: 802rpx; display: block; box-sizing: border-box; background-color: #eeeeee">
+    <block wx:for="{{typeBar}}" wx:for-index="idx" wx:for-item="typeItem" wx:key="idx">
+      <view class="item {{currentType == idx ? 'active':''}}" data-current="{{idx}}" bindtap="typeBarTap">{{typeItem}}
+      </view>
+    </block>
+  </view>
+
+  <!-- 订单 -->
+  <view style="width: 620rpx; height: 802rpx; display: block; box-sizing: border-box; margin-left: 100rpx; position: relative; left: 30rpx; top: -802rpx">
+    <scroll-view scroll-y="true" scroll-x="false" style="position: relative; left: 0rpx; top: 0rpx; width: 620rpx; height: 730rpx; display: block; box-sizing: border-box" bindscrolltolower="onScrollToLower">
+      <navigator wx:for-items="{{showOrders}}" wx:key="id" style="width: 600rpx; height: 164rpx; display: block; box-sizing: border-box; margin-top: 20rpx; border: 1rpx solid grey;" url="/pages/riderOrder/riderOrder?id={{item.id}}&type=0">
+        <image style="width: 150rpx; height: 150rpx; display: inline-block; box-sizing: border-box; position: relative; left: 5rpx; top: 5rpx" src="{{item.client.avatarUrl}}" mode=""/>
+        <view style="width: 340rpx; height: 70rpx; display: block; box-sizing: border-box; position: relative; left: 170rpx; top: -158rpx; text-align: left; line-height: 70rpx; font-weight: bold">{{item.serviceType === '外卖' ? item.restaurant + " ￥" + item.totalPrice : (item.serviceType === '快递' ? item.pickUpCode : '闪送')}}</view>
+        <view style="width: 280rpx; height: 70rpx; display: block; box-sizing: border-box; left: 171rpx; top: -158rpx; position: relative; text-align: left; line-height: 40rpx; font-size: 13px">
+          {{item.deliveryAddress.address}} - {{item.pickUpAddress}}
+        </view>
+        <view style="width: 280rpx; height: 70rpx; display: block; box-sizing: border-box; left: 171rpx; top: -194rpx; position: relative; text-align: left; line-height: 60rpx; font-size: 13px">
+          预计送达时间 {{tool.sliceTime(item.orderTracking.placedTime)}}
+        </view>
+        <view style="width: 94rpx; height: 70rpx; display: block; box-sizing: border-box; position: relative; left: 481rpx; top: -358rpx; text-align: center; line-height: 70rpx; font-weight: bold; font-size: 18px">
+          ￥{{item.fee}}
+        </view>
+        <button style="width: 150rpx; height: 70rpx; display: block; box-sizing: border-box; left: 202rpx; top: -354rpx; position: relative; background-color: orange; color: white; text-align: center; line-height: 70rpx" catchtap="takeThisOrder" data-id="{{item.id}}">接单</button>
+      </navigator>
+
+      <!-- 暂无更多订单 -->
+      <view style="margin-bottom: 800rpx; display: {{currentPage * pageSize >= totalOrders ? 'flex' : 'none'}}; justify-content: center; color: grey; margin-top: 20rpx;">
+        暂无更多订单
+      </view>
+    </scroll-view>
+  </view>
+
+</view>
+
+<wxs module="tool">
+  var sliceTime=function(str) {
+    str = str + ""
+    return str.substring(11,16)
+  }
+
+  module.exports = {
+    sliceTime:sliceTime
+  }
+</wxs>

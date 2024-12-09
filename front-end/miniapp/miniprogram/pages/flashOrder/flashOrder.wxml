@@ -1,0 +1,45 @@
+<!--pages/flashOrder/flashOrder.wxml-->
+<view class="v1">
+ 
+ <!-- v2父容器  子view使用绝对布局 -->
+   <view class="v2">
+     <view class="dltext">闪送服务下单</view>
+  
+     <!-- 订单描述（不多于10个字） -->
+     <view class="descriptionCs">
+       <image src="/resource/icon/description.png" class="ph"></image>
+       <input placeholder="订单描述 (不多于10字)" bindinput="onInputDescription"/>
+     </view>
+     <!-- 取货地址 -->
+     <view class="pickupAddressCs">
+       <image src="/resource/icon/address.png" class="pa"></image>
+       <input placeholder="请输入取货地址" bindinput="onInputPickupAddress"/>
+     </view>
+     <!-- 送餐地址（下拉框） -->
+     <view class="deliveryAddressCs">
+       <image src="/resource/icon/location.png" class="pd"></image>
+       <picker bindchange="onDeliveryAddressChange" value="{{dAddressId}}" range="{{dAddress}}" >
+       <view>送货地址：{{dAddress[dAddressId]}}</view>
+       </picker>
+     </view>
+     <!-- 期望送达时间 -->
+     <view class="expectedTimeCs">
+       <image src="/resource/icon/time2.png" class="pe"></image>
+       <date-time-picker mode="time" bindchange="onExpectedTimeChange" value="{{value}}" >
+       <view>期望到达时间：{{expectedTime}}</view>
+       </date-time-picker>
+     </view>
+
+     <!-- 费用 -->
+     <view class="feeCs">
+       <image src="/resource/icon/fee.png" class="pf"></image>
+       <input placeholder="支付骑手费用" bindinput="onInputFee"/>
+     </view>
+  
+     <!-- 下单按钮 -->
+     <view class="order">
+       <button class="btn-dl" type="primary" style="width: 350rpx; height: 68rpx; display: flex; box-sizing: border-box; left: 0rpx; top: -43rpx; position: relative; align-items: center; justify-content: center;" bindtap="order">下单</button>
+     </view>
+   </view>
+  
+ </view>

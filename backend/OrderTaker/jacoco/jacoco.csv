@@ -1,0 +1,11 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+OrderTaker,com.example.ordertaker.service.impl,MessageServiceImpl,41,65,12,10,7,15,11,4,0,4
+OrderTaker,com.example.ordertaker.service.impl,DeliveryAddressServiceImpl,21,44,9,5,4,8,7,4,0,4
+OrderTaker,com.example.ordertaker.service.impl,OrderServiceImpl,258,587,52,16,65,123,34,39,0,39
+OrderTaker,com.example.ordertaker.service.impl,OrderTrackingServiceImpl,75,113,16,12,13,29,15,9,1,9
+OrderTaker,com.example.ordertaker.service.impl,CourierServiceImpl,137,148,20,14,27,29,21,11,4,11
+OrderTaker,com.example.ordertaker.service.impl,PaymentServiceImpl,58,35,13,7,14,9,11,3,1,3
+OrderTaker,com.example.ordertaker.service.impl,ClientServiceImpl,5,60,9,11,1,11,9,4,0,3
+OrderTaker,com.example.ordertaker.service.impl,AdministerServiceImpl,5,30,4,4,1,6,4,2,0,2
+OrderTaker,com.example.ordertaker.service.impl,BlacklistServiceImpl,21,67,2,2,5,11,3,4,1,4
+OrderTaker,com.example.ordertaker.service.impl,ReviewServiceImpl,123,105,28,16,25,26,24,7,2,7

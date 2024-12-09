@@ -1,0 +1,84 @@
+<!--pages/user/user.wxml-->
+<view style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; background-color: #efefef;">
+
+  <!-- 头像 -->
+  <image bindtap="toInformation" style="width: 180rpx; height: 180rpx; display: inline-block; box-sizing: border-box; position: relative; left: 90rpx; top: 10rpx; border-radius: 50%; overflow: hidden" src="{{user.avatar}}" mode=""/>
+
+  <!-- 昵称 -->
+  <text bindtap="toInformation" style="position: relative; left: 132rpx; top: -64rpx; font-size: 22px">{{user.name}}</text>
+
+  <!-- 主要功能 -->
+  <view style="width: 686rpx; height: 180rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 15rpx; background-color: white; border-radius: 20rpx; box-shadow: 1rpx 1rpx 10rpx 1rpx grey">
+    <!-- 个人信息 -->
+    <view style="position: relative; left: 0rpx; top: 0rpx; width: 230rpx; height: 180rpx; display: block; box-sizing: border-box" bindtap="toInformation">
+      <image style="width: 100rpx; height: 100rpx; display: inline-block; box-sizing: border-box; position: relative; left: 65rpx; top: 22rpx" src="https://i.postimg.cc/hhW4nqpk/userInfo.png" mode=""/>
+      <view style="position: relative; left: -1rpx; top: 15rpx; display: flex; justify-content: center; align-items: center; font-family: Simhei">个人信息</view>
+    </view>
+    <!-- 地址管理 -->
+    <view style="position: relative; left: 230rpx; top: -180rpx; width: 230rpx; height: 180rpx; display: block; box-sizing: border-box" bindtap="toModifyAddress">
+      <image style="width: 100rpx; height: 100rpx; display: inline-block; box-sizing: border-box; position: relative; left: 65rpx; top: 22rpx" src="https://i.postimg.cc/L6Cvx6QQ/address.png" mode=""/>
+      <view style="position: relative; left: -1rpx; top: 15rpx; display: flex; justify-content: center; align-items: center; font-family: Simhei">地址管理</view>
+    </view>
+    <!-- 我的评价 -->
+    <view style="position: relative; left: 456rpx; top: -360rpx; width: 230rpx; height: 180rpx; display: block; box-sizing: border-box">
+      <image style="width: 100rpx; height: 100rpx; display: inline-block; box-sizing: border-box; position: relative; left: 65rpx; top: 22rpx" src="https://i.postimg.cc/PJFZQNfm/feedback.png" mode=""/>
+      <view style="position: relative; left: -1rpx; top: 15rpx; display: flex; justify-content: center; align-items: center; font-family: Simhei">我的评价</view>
+    </view>
+  </view>
+
+  <!-- 常用功能 -->
+  <view style="width: 690rpx; height: 56vh; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 36rpx; background-color: white; border-radius: 20rpx; box-shadow: 1rpx 1rpx 10rpx 1rpx grey; border: 1rpx solid grey">
+    <view style="width: 600rpx; height: 8vh; display: flex; box-sizing: border-box; justify-content: left; align-items: center; font-size: 20px; font-weight: bold; position: relative; left: 43rpx; top: 0rpx; line-height: 8vh">
+      常用功能
+    </view>
+    <!-- 我的消息 -->
+    <view style="width: 690rpx; height: 8vh; display: block; box-sizing: border-box; border-top: 4rpx solid #bbbbbb;">
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 46rpx; top: 13rpx" src="https://i.postimg.cc/1tvNy4qL/notice.png" mode=""/>
+      <text style="position: relative; left: 154rpx; top: -54rpx">
+        我的消息
+      </text>
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 546rpx; top: -112rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" mode=""/>
+    </view>
+    <!-- 客服中心 -->
+    <view style="width: 690rpx; height: 8vh; display: block; box-sizing: border-box; border-top: 4rpx solid #bbbbbb;">
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 46rpx; top: 13rpx" src="https://i.postimg.cc/mDyyCbFw/customer-Service.png" mode=""/>
+      <text style="position: relative; left: 154rpx; top: -54rpx">
+        客服中心
+      </text>
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 546rpx; top: -112rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" mode=""/>
+    </view>
+    <!-- 设置 -->
+    <view style="width: 690rpx; height: 8vh; display: block; box-sizing: border-box; border-top: 4rpx solid #bbbbbb;">
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 46rpx; top: 13rpx" src="https://i.postimg.cc/yd8kpBbn/setting.png" mode=""/>
+      <text style="position: relative; left: 154rpx; top: -54rpx">
+        设置
+      </text>
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 546rpx; top: -112rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" mode=""/>
+    </view>
+    <!-- 常见问题 -->
+    <view style="width: 690rpx; height: 8vh; display: block; box-sizing: border-box; border-top: 4rpx solid #bbbbbb;">
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 46rpx; top: 13rpx" src="https://i.postimg.cc/7hcGTcX9/problem.png" mode=""/>
+      <text style="position: relative; left: 154rpx; top: -54rpx">
+        常见问题
+      </text>
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 546rpx; top: -112rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" mode=""/>
+    </view>
+    <!-- 开发者信息 -->
+    <view style="width: 690rpx; height: 8vh; display: block; box-sizing: border-box; border-top: 4rpx solid #bbbbbb;">
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 46rpx; top: 13rpx" src="https://i.postimg.cc/jdFQz3CG/developer.png" mode=""/>
+      <text style="position: relative; left: 154rpx; top: -54rpx">
+        开发者信息
+      </text>
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 546rpx; top: -112rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" mode=""/>
+    </view>
+    <!-- 退出登录 -->
+    <view style="width: 690rpx; height: 8vh; display: block; box-sizing: border-box; border-top: 4rpx solid #bbbbbb;" bindtap="logout">
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 46rpx; top: 13rpx" src="https://i.postimg.cc/BnP5N5Kt/exit.png" mode=""/>
+      <text style="position: relative; left: 154rpx; top: -54rpx">
+        退出登录
+      </text>
+      <image style="width: 6vh; height: 6vh; display: inline-block; box-sizing: border-box; position: relative; left: 546rpx; top: -112rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" mode=""/>
+    </view>
+  </view>
+
+</view>

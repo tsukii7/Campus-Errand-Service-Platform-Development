@@ -1,0 +1,199 @@
+<view style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; background-color: #efefef">
+
+<!-- 顶部状态信息 -->
+<text style="position: relative; left: 30rpx; top: 4rpx; font-size: 25px; font-family: Simhei" bindtap="showOrderTracking">{{info.statusInfo(order.currentStatus)}}</text>
+
+<!-- 右箭头 -->
+<image style="width: 62rpx; height: 64rpx; display: inline-block; box-sizing: border-box; position: relative; left: 30rpx; top: 19rpx" src="https://i.postimg.cc/dtkTKstx/right-Arrow-Simple.png" bindtap="showOrderTracking"/>
+
+<!-- 卡片 -->
+<view style="width: 688rpx; height: 744rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 32rpx; background-color: white; border-radius: 40rpx; box-shadow: 1rpx 1rpx 10rpx 1rpx grey">
+
+  <!-- 右上角种类信息 -->
+  <view style="width: 142rpx; height: 46rpx; display: block; box-sizing: border-box; position: relative; left: 520rpx; top: 24rpx; font-size: 16px; font-family: Simhei; display: flex; justify-content: center; align-items: center;">
+    {{info.typeInfo(order.serviceType)}}
+  </view>
+
+  <!-- 第一个大框 -->
+  <view style="position: relative; left: 0rpx; top: 24rpx; width: 688rpx; height: 274rpx; display: block; box-sizing: border-box; border-top: 2rpx solid grey;">
+
+    <!-- 订单种类对应图片 -->
+    <image style="width: 90rpx; height: 90rpx; display: inline-block; box-sizing: border-box; position: relative; left: 32rpx; top: 24rpx" src="{{iconPath[order.serviceType === '外卖' ? 0 : (order.serviceType === '快递' ? 1 : 2)]}}" mode=""/>
+
+    <!-- 订单简略描述 -->
+    <view style="width: 390rpx; height: 90rpx; display: block; box-sizing: border-box; position: relative; left: 149rpx; top: -74rpx; display: flex; justify-content: center; align-items: center; border: 1rpx solid grey; border-radius: 150rpx">
+      {{info.shortInfo(order.description)}}
+    </view>
+
+    <!-- 价格 -->
+    <view style="width: 122rpx; height: 60rpx; display: block; box-sizing: border-box; font-size: 20px; position: relative; left: 566rpx; top: -149rpx">
+      ￥{{order.fee}}
+    </view>
+
+    <!-- 时间文本 -->
+    <view style="width: 226rpx; height: 86rpx; display: flex; box-sizing: border-box; position: relative; left: 32rpx; top: -88rpx; color: #555555; font-size: 18px; justify-content: center; align-items: center">
+      预计取货时间
+      期望送达时间
+    </view>
+
+    <!-- 具体时间 -->
+    <view style="width: 200rpx; height: 86rpx; display: flex; flex-direction: column; box-sizing: border-box; position: relative; left: 477rpx; top: -174rpx; justify-content: center; align-items: center;">
+      <text>{{info.shortTime(orderTracking.placedTime)}}</text>
+      <text>{{info.shortTime(order.expectedArrivedTime)}}</text>
+    </view>
+
+  </view>
+
+  <!-- 第二个大框 -->
+  <view style="width: 688rpx; height: 166rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: 24rpx; border-top: 1rpx solid grey">
+
+    <!-- 地址文本 -->
+    <view style="width: 136rpx; height: 90rpx; display: flex; flex-direction: column; box-sizing: border-box; position: relative; left: 42rpx; top: 15rpx; justify-content: center; align-items: center; color: #555555">
+      <text>取货地址</text>
+      <text>送货地址</text>
+    </view>
+
+    <!-- 详细地址 -->
+    <view style="width: 260rpx; height: 90rpx; display: flex; flex-direction: column; box-sizing: border-box; position: relative; left: 402rpx; top: -74rpx; justify-content: center; align-items: flex-end">
+      <text>{{order.pickUpAddress}}</text>
+      <text>{{deliveryAddress.address}}</text>
+    </view>
+
+    <!-- 收货人电话 -->
+    <view wx:if="{{deliveryAddress.phoneNumber}}" style="width: 322rpx; height: 44rpx; display: flex; box-sizing: border-box; position: relative; left: 344rpx; top: -74rpx; justify-content: center; align-items: center">
+      {{deliveryAddress.receiver}} {{info.phoneInfo(deliveryAddress.phoneNumber)}}
+    </view>
+
+  </view>
+
+  <!-- 第三个大框 -->
+  <view style="width: 688rpx; height: 164rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: 24rpx; border-top: 1rpx solid grey">
+
+    <!-- 下单时间文本 -->
+    <view style="width: 136rpx; height: 45rpx; display: flex; box-sizing: border-box; position: relative; left: 38rpx; top: 20rpx; justify-content: center; align-items: center; color: #555555">
+      下单时间
+    </view>
+
+    <!-- 下单时间 -->
+    <view style="width: 200rpx; height: 43rpx; display: flex; flex-direction: column; box-sizing: border-box; position: relative; left: 466rpx; top: -24rpx; justify-content: center; align-items: center;">
+      {{info.shortTime(orderTracking.createdTime)}}
+    </view>
+
+    <!-- 取消时间文本 -->
+    <view style="width: 136rpx; height: 45rpx; display: {{order.currentStatus === '已取消' ? 'flex' : 'none'}}; box-sizing: border-box; position: relative; left: 38rpx; top: -16rpx; justify-content: center; align-items: center; color: #555555">
+      取消时间
+    </view>
+
+    <!-- 取消时间 -->
+    <view style="width: 200rpx; height: 43rpx; display: {{order.currentStatus === '已取消' ? 'flex' : 'none'}}; flex-direction: column; box-sizing: border-box; position: relative; left: 466rpx; top: -60rpx; justify-content: center; align-items: center">
+      {{info.shortTime(orderTracking.cancelledTime)}}
+    </view>
+
+    <!-- 完成时间文本 -->
+    <view style="width: 136rpx; height: 45rpx; display: {{orderTracking.confirmedTime !== null ? 'flex' : 'none'}}; box-sizing: border-box; position: relative; left: 38rpx; top: -16rpx; justify-content: center; align-items: center; color: #555555">
+      完成时间
+    </view>
+
+    <!-- 完成时间 -->
+    <view style="width: 200rpx; height: 43rpx; display: {{orderTracking.confirmedTime !== null ? 'flex' : 'none'}}; flex-direction: column; box-sizing: border-box; position: relative; left: 466rpx; top: -60rpx; justify-content: center; align-items: center">
+      {{info.shortTime(orderTracking.confirmedTime)}}
+    </view>
+
+  </view>
+
+  <!-- 未找到? -->
+  <view style="width: 114rpx; height: 30rpx; display: {{(order.currentStatus === '已接单') ? 'block' : 'none'}}; box-sizing: border-box; position: relative; left: 376rpx; top: 34rpx; font-size: 12px; color: grey;">
+    未找到?
+  </view>
+
+  <!-- 接取订单/确认取货/确认送达 按钮 -->
+  <view style="width: 150rpx; height: 50rpx; display: {{(order.currentStatus !== '已取消' && orderTracking.confirmedTime === null && orderTracking.arrivedTime === null)? 'flex' : 'none'}}; box-sizing: border-box; position: relative; left: 512rpx; top: -6rpx; justify-content: center; align-items: center; border: 1rpx solid orange; border-radius: 10rpx; font-size: 14px; background-color: {{order.currentStatus === '已下单' ? 'white' : 'orange'}}; color: {{order.currentStatus === '已下单' ? 'black' : 'white'}}" bindtap="changeStatus">
+    {{order.currentStatus === '已下单' ? '接取订单' : (order.currentStatus === '已接单' ? '确认取货' : '确认送达')}}
+  </view>
+
+</view>
+
+<!-- 未接单时的提示信息 -->
+<view style="position: relative; left: 132rpx; display: {{order.currentStatus === '已下单' ? 'flex' : 'none'}}; top: 90rpx; width: 484rpx; height: 40rpx; box-sizing: border-box; font-size: 12px; justify-content: center; align-items: center; color: grey;">
+  {{info.shortTime(order.expectedArrivedTime)}}前无骑手接单，订单将自动取消
+</view>
+
+<!-- 用户信息 -->
+<view style="width: 750rpx; height: 114rpx; display: {{(order.currentStatus !== '已下单' && order.currentStatus !== '已取消') ? 'block' : 'none'}}; box-sizing: border-box; position: relative; left: -1rpx; top: 57rpx">
+
+  <image style="width: 81rpx; height: 81rpx; display: inline-block; box-sizing: border-box; position: relative; left: 66rpx; top: 17rpx; border-radius: 50%; overflow: hidden;" src="{{client.avatarUrl}}" mode=""/>
+  <text style="width: 191rpx; height: 42rpx; display: inline-block; box-sizing: border-box; position: relative; left: 90rpx; top: -30rpx; text-align: left">{{client.clientName}}</text>
+
+  <!-- 私聊按钮 -->
+  <view style="width: 100rpx; height: 100rpx; position: relative; left: 572rpx; top: -88rpx; background-color: white; display: block; border-radius: 50%; overflow: hidden;">
+    <image style="width: 81rpx; height: 81rpx; display: inline-block; box-sizing: border-box; position: relative; left: 10rpx; top: 10rpx" src="https://i.postimg.cc/3R8vM2dX/msg.png" mode=""/>
+  </view>
+
+</view>
+
+<!-- 订单追踪 -->
+<van-popup show="{{show}}" bind:close="onClose" position="bottom" custom-style="height: 20%">
+  <view style="width: 750rpx; height: 80rpx; display: block; box-sizing: border-box; text-align: center; line-height: 100rpx; font-weight: bold;">
+    订单追踪
+  </view>
+  <view style="display: flex; margin-top: 20rpx">
+    <block wx:if="{{order.currentStatus !== '已下单' && order.currentStatus !== '已接单' && order.currentStatus !== '已取消'}}">
+      <view style="position: relative; left: 60rpx; top: 0rpx">
+        · 骑手已取货
+      </view>
+      <view style="position: relative; left: 334rpx; top: 0rpx">
+        {{info.shortTime(orderTracking.transitedTime)}}
+      </view>
+    </block>
+    <block wx:if="{{order.currentStatus === '已下单' || order.currentStatus === '已接单'}}">
+      <view style="position: relative; left: 60rpx; top: 0rpx; font-weight: bold;">
+        · {{order.currentStatus === '已下单' ? '等待骑手接单' : '等待骑手取货'}}
+      </view>
+    </block>
+  </view>
+  <view style="display: flex; margin-top: 20rpx">
+    <block wx:if="{{order.currentStatus === '已送达' || order.currentStatus === '已确认'}}">
+      <view style="position: relative; left: 60rpx; top: 0rpx">
+        · 骑手已送达
+      </view>
+      <view style="position: relative; left: 334rpx; top: 0rpx">
+        {{info.shortTime(orderTracking.arrivedTime)}}
+      </view>
+    </block>
+    <block wx:if="{{order.currentStatus === '配送中'}}">
+      <view style="position: relative; left: 60rpx; top: 0rpx; font-weight: bold;">
+        · 等待骑手送达
+      </view>
+    </block>
+  </view>
+</van-popup>
+
+</view>
+
+<wxs module="info">
+module.exports.statusInfo = function(str) {
+  if(str === '已下单') return '等待骑手接单'
+  else if(str === '已接单') return '骑手已接单'
+  else if(str === '配送中') return '骑手正在配送'
+  else if(str === '已送达') return '订单已送达'
+  else if(str === '已确认') return '订单已确认'
+  else return '订单已取消'
+}
+module.exports.typeInfo = function(str) {
+  if(str === '外卖') return '外卖代取'
+  else if(str === '快递') return '快递代取'
+  else return '闪送服务'
+}
+module.exports.shortInfo=function(str) {
+  str = (str === null ? '无描述' : str + "")
+  if(str.length <= 13) return str
+  else return str.split('').splice(0,13).join('') + '...'
+}
+module.exports.phoneInfo=function(str) {
+  return str.substring(0,3) + '****' + str.substring(7)
+}
+module.exports.shortTime=function(str) {
+  str = str + ""
+  return str.substring(5,10) + ' ' + str.substring(11,16)
+}
+</wxs>

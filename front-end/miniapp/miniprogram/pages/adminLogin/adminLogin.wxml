@@ -1,0 +1,23 @@
+<view class="v1">
+ 
+ <!-- v2父容器  子view使用绝对布局 -->
+   <view class="v2">
+     <view class="dltext">管理员登录</view>
+    
+     <image src="https://i.postimg.cc/4y9DxgMH/admin.jpg" mode="" style="width: 200rpx; height: 200rpx; position: relative; left: 159rpx; top: 150rpx; display: inline-block; box-sizing: border-box"/>
+
+     <!-- 密码 -->
+     <view class="passwordCs">
+       <image src="https://i.postimg.cc/02FD66Bv/lock.png" class="ps"></image>
+       <input placeholder="请输入密码" password="{{!show}}" bindinput="onInputPassword"/>
+       <image src="{{eye_images[show]}}" class="eye" bindtap="switchPasswordDisplay"></image>
+     </view>
+  
+     <!-- 登录按钮 -->
+     <view class="denglu">
+       <button class="btn-dl" type="primary" style="width: 350rpx; height: 68rpx; display: flex; box-sizing: border-box; left: 0rpx; top: -43rpx; position: relative; align-items: center; justify-content: center;" bindtap="login">登录</button>
+     </view>
+   </view>
+  
+ </view>
+  

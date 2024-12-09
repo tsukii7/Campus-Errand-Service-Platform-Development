@@ -1,0 +1,72 @@
+/* 最大的父元素 */
+.v1{
+  display: block;
+  position:absolute;
+  height: 100%;
+  width: 100%;
+  background: #356363;
+  /* 换图片 */
+  
+}
+/* 白色区域 */
+.v1 .v2{
+  position: relative;
+  margin-top: 150rpx;
+  left: 100rpx; 
+  width: 545rpx;
+  height: 750rpx;
+  background: #FFFFFF;
+  border-radius: 50rpx;
+}
+/* 白色区域内的登录文本 */
+.v1 .v2 .dltext{
+  margin-top: 50rpx;
+  position: absolute;
+  margin-left: 110rpx;
+  width: 350rpx;
+  height: 100rpx;
+  font-size: 60rpx;
+  font-family: Helvetica;
+  color: #000000;
+  line-height: 100rpx;
+  letter-spacing: 2rpx;
+}
+/* 密码图标+输入框+小眼睛图标+下划线父容器view */
+.v1 .v2 .passwordCs{
+  margin-top: 160rpx;
+  margin-left: 35rpx;
+  position: absolute;
+  display: flex;
+  width:450rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 密码图标 */
+.v1 .v2 .passwordCs .ps{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 眼睛 图标*/
+.v1 .v2 .passwordCs .eye{
+  margin-top: 5rpx;
+  margin-left: 65rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 密码输入框 */
+.v1 .v2 .passwordCs input{
+  width: 250rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+/* 登录按钮容器view */
+.v1 .v2 .denglu{
+  width: 350rpx;
+  height: 50rpx;
+  position: absolute;
+  margin-top: 340rpx;
+  margin-left: 85rpx;
+}

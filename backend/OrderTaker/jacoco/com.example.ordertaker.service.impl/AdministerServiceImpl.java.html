@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdministerServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.service.impl</a> &gt; <span class="el_source">AdministerServiceImpl.java</span></div><h1>AdministerServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.ordertaker.entity.Administer;
+import com.example.ordertaker.AOP.exceptionInfo.MyException;
+import com.example.ordertaker.mapper.AdministerMapper;
+import com.example.ordertaker.service.AdministerService;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L12">public class AdministerServiceImpl extends ServiceImpl&lt;AdministerMapper, Administer&gt; implements AdministerService {</span>
+
+    @Override
+    public Administer checkAdministerExist(String adminName, String password) {
+<span class="pc bpc" id="L16" title="3 of 6 branches missed.">        if (adminName == null || adminName.isEmpty()</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">                || password == null || password.isEmpty())</span>
+<span class="nc" id="L18">            throw new MyException(&quot;管理员信息不完整！&quot;);</span>
+
+<span class="fc" id="L20">        return super.baseMapper.selectOne(new LambdaQueryWrapper&lt;Administer&gt;()</span>
+<span class="fc" id="L21">                .eq(Administer::getAdminName, adminName)</span>
+<span class="fc" id="L22">                .eq(Administer::getPassword, password));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

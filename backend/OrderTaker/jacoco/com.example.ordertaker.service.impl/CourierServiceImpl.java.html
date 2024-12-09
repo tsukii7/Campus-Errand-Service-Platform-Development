@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourierServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.service.impl</a> &gt; <span class="el_source">CourierServiceImpl.java</span></div><h1>CourierServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.ordertaker.entity.Blacklist;
+import com.example.ordertaker.entity.Courier;
+import com.example.ordertaker.AOP.exceptionInfo.MyException;
+import com.example.ordertaker.mapper.CourierMapper;
+import com.example.ordertaker.service.BlacklistService;
+import com.example.ordertaker.service.CourierService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+<span class="fc" id="L18">@Service</span>
+<span class="fc" id="L19">public class CourierServiceImpl extends ServiceImpl&lt;CourierMapper, Courier&gt; implements CourierService {</span>
+
+    @Autowired
+    private BlacklistService blacklistService;
+
+    @Override
+    public Courier selectOne(String email, String password) {
+<span class="pc bpc" id="L26" title="3 of 6 branches missed.">        if (email == null || email.isEmpty()</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">                || password == null || password.isEmpty())</span>
+<span class="nc" id="L28">            throw new MyException(&quot;骑手信息不完整！&quot;);</span>
+
+<span class="pc" id="L30">        return super.baseMapper.selectOne(new LambdaQueryWrapper&lt;Courier&gt;()</span>
+<span class="fc" id="L31">                .eq(Courier::getEmail, email)</span>
+<span class="fc" id="L32">                .eq(Courier::getPassword, password));</span>
+    }
+
+    @Override
+    public boolean save(Courier courier) {
+<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        if (courier.getEmail() == null || courier.getEmail().isEmpty()</span>
+<span class="pc bpc" id="L38" title="2 of 4 branches missed.">                || courier.getPassword() == null || courier.getPassword().isEmpty()</span>
+<span class="pc bpc" id="L39" title="2 of 4 branches missed.">                || courier.getCourierName() == null || courier.getCourierName().isEmpty())</span>
+<span class="nc" id="L40">            throw new MyException(&quot;骑手信息不完整！&quot;);</span>
+
+<span class="fc" id="L42">        courier.setRating(0.0);</span>
+<span class="fc" id="L43">        courier.setBlockTimes(0);</span>
+<span class="nc" id="L44">        return super.save(courier);</span>
+    }
+
+    @Override
+    public List&lt;Courier&gt; page(long current, long size) {
+<span class="nc" id="L49">        return super.page(new Page&lt;&gt;(current, size)).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Courier&gt; page(String courierName, long current, long size) {
+<span class="pc bpc" id="L54" title="2 of 4 branches missed.">        if (courierName == null || courierName.isEmpty())</span>
+<span class="nc" id="L55">            throw new MyException(&quot;骑手信息不完整！&quot;);</span>
+
+<span class="pc" id="L57">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Courier&gt;()
+<span class="fc" id="L60">                        .eq(Courier::getCourierName, courierName)</span>
+<span class="nc" id="L61">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Courier&gt; pageOrderByRatingAsc(long current, long size) {
+<span class="pc" id="L66">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+<span class="fc" id="L68">                new LambdaQueryWrapper&lt;Courier&gt;().orderByAsc(Courier::getRating)</span>
+<span class="nc" id="L69">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Courier&gt; pageOrderByRatingDesc(long current, long size) {
+<span class="pc" id="L74">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+<span class="fc" id="L76">                new LambdaQueryWrapper&lt;Courier&gt;().orderByDesc(Courier::getRating)</span>
+<span class="nc" id="L77">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Courier&gt; pageOrderByBlockTimesAsc(long current, long size) {
+<span class="pc" id="L82">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+<span class="fc" id="L84">                new LambdaQueryWrapper&lt;Courier&gt;().orderByAsc(Courier::getBlockTimes)</span>
+<span class="nc" id="L85">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Courier&gt; pageOrderByBlockTimesDesc(long current, long size) {
+<span class="pc" id="L90">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+<span class="fc" id="L92">                new LambdaQueryWrapper&lt;Courier&gt;().orderByDesc(Courier::getBlockTimes)</span>
+<span class="nc" id="L93">        ).getRecords();</span>
+    }
+
+    @Override
+    public boolean block(Long id) {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        assert (this.setBlockTimes(id, super.getById(id).getBlockTimes() + 1));</span>
+<span class="nc" id="L99">        Blacklist blacklist = new Blacklist();</span>
+<span class="nc" id="L100">        blacklist.setCourierId(id);</span>
+<span class="nc" id="L101">        blacklist.setCreatedTime(new Date());</span>
+<span class="nc" id="L102">        return blacklistService.save(blacklist);</span>
+    }
+
+    @Override
+    public boolean unblock(Long id) {
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        if (id == null) {</span>
+<span class="nc" id="L108">            throw new MyException(&quot;骑手id为空！&quot;);</span>
+        }
+
+<span class="fc" id="L111">        return blacklistService.remove(</span>
+                new LambdaQueryWrapper&lt;Blacklist&gt;()
+<span class="fc" id="L113">                        .eq(Blacklist::getCourierId, id)</span>
+        );
+    }
+
+    @Override
+    public boolean setBlockTimes(Long id, Integer blockTimes) {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (id == null)</span>
+<span class="nc" id="L120">            throw new MyException(&quot;骑手id为空！&quot;);</span>
+
+<span class="nc" id="L122">        Courier courier = super.getById(id);</span>
+<span class="nc" id="L123">        courier.setBlockTimes(blockTimes);</span>
+<span class="nc" id="L124">        return super.updateById(courier);</span>
+    }
+
+    @Override
+    public boolean setRating(Long id, Double rating) {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (id == null)</span>
+<span class="nc" id="L130">            throw new MyException(&quot;骑手id为空！&quot;);</span>
+
+<span class="nc" id="L132">        Courier courier = super.getById(id);</span>
+<span class="nc" id="L133">        courier.setRating(rating);</span>
+<span class="nc" id="L134">        return super.updateById(courier);</span>
+    }
+
+    @Override
+    public boolean isBlock(Long id) {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (id == null)</span>
+<span class="nc" id="L140">            throw new MyException(&quot;骑手id为空！&quot;);</span>
+
+<span class="pc" id="L142">        return blacklistService.getBaseMapper().exists(</span>
+                new LambdaQueryWrapper&lt;Blacklist&gt;()
+<span class="fc" id="L144">                        .eq(Blacklist::getCourierId, id));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdministerController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">AdministerController.java</span></div><h1>AdministerController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import com.example.ordertaker.AOP.exceptionInfo.MyException;
+import com.example.ordertaker.entity.Administer;
+import com.example.ordertaker.entity.Blacklist;
+import com.example.ordertaker.entity.Courier;
+import com.example.ordertaker.service.AdministerService;
+import com.example.ordertaker.service.BlacklistService;
+import com.example.ordertaker.service.CourierService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+<span class="nc" id="L20">@Tag(name = &quot;管理员接口&quot;, description = &quot;/api/administer&quot;)</span>
+@RestController
+@RequestMapping(&quot;/api/administer&quot;)
+<span class="nc" id="L23">public class AdministerController {</span>
+
+    @Autowired
+    private AdministerService administerService;
+
+    @Autowired
+    private CourierService courierService;
+
+    @Autowired
+    private BlacklistService blacklistService;
+
+    /**
+     * 管理员登录
+     *
+     * @param adminName 管理员用户名
+     * @param password  管理员密码
+     * @return 登录成功返回管理员id  登录失败返回报错信息
+     */
+    @Parameters({
+            @Parameter(name = &quot;adminName&quot;, description = &quot;管理员用户名&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;password&quot;, description = &quot;管理员密码&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;管理员登录&quot;, description = &quot;管理员登录&quot;)
+    @GetMapping(&quot;/login&quot;)
+    public long login(@RequestParam String adminName, @RequestParam String password) {
+<span class="nc" id="L48">        Administer result = administerService.checkAdministerExist(adminName, password);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (result == null) {</span>
+<span class="nc" id="L50">            throw new MyException(&quot;管理员用户名或者密码错误！&quot;);</span>
+        }
+<span class="nc" id="L52">        return result.getId();</span>
+    }
+
+    /**
+     * 封禁骑手
+     *
+     * @param courier 骑手信息，需填写id
+     * @return 是否封禁成功
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;骑手主键id&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;封禁骑手&quot;, description = &quot;封禁骑手&quot;)
+    @RequestMapping(value = &quot;/block&quot;, method = {RequestMethod.POST, RequestMethod.PATCH})
+    public boolean block(@RequestBody Courier courier) {
+<span class="nc" id="L65">        return courierService.block(courier.getId());</span>
+    }
+
+    /**
+     * 解封骑手
+     *
+     * @param id 骑手主键id
+     * @return 是否解封成功
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;骑手主键id&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;解封骑手&quot;, description = &quot;解封骑手&quot;)
+    @DeleteMapping(&quot;/unblock&quot;)
+    public boolean unblock(@RequestParam Long id) {
+<span class="nc" id="L78">        return courierService.unblock(id);</span>
+    }
+
+    /**
+     * 设置骑手封禁次数
+     *
+     * @param courier 骑手信息，需填写id和blockTimes
+     * @return 是否设置成功
+     */
+    @Parameter(name = &quot;courier&quot;, description = &quot;骑手信息，需填写id和blockTimes&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;设置骑手封禁次数&quot;, description = &quot;设置骑手封禁次数&quot;)
+    @PatchMapping(&quot;/block-times&quot;)
+    public boolean setBlockTimes(@RequestBody Courier courier) {
+<span class="nc" id="L91">        return courierService.setBlockTimes(courier.getId(), courier.getBlockTimes());</span>
+    }
+
+    /**
+     * 设置骑手评分
+     *
+     * @param courier 骑手信息，需填写id和rating
+     * @return 是否设置成功
+     */
+    @Parameter(name = &quot;courier&quot;, description = &quot;骑手信息，需填写id和rating&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;设置骑手评分&quot;, description = &quot;设置骑手评分&quot;)
+    @PatchMapping(&quot;/rating&quot;)
+    public boolean setRating(@RequestBody Courier courier) {
+<span class="nc" id="L104">        return courierService.setRating(courier.getId(), courier.getRating());</span>
+    }
+
+    /**
+     * 查询骑手列表。可根据姓名查询，或按照违规次数或评分排序
+     *
+     * @param current     当前页码
+     * @param size        每页大小
+     * @param courierName 骑手信息，需填写姓名
+     * @param order       排序字段，可选值为 {@code rating} 和 {@code blockTimes}
+     * @param type        排序类型，可选值为 {@code asc} 和 {@code desc}
+     * @return 骑手列表
+     */
+    @Parameters({
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页码&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;courierName&quot;, description = &quot;骑手信息，需填写姓名&quot;, in = ParameterIn.QUERY),
+            @Parameter(name = &quot;order&quot;, description = &quot;排序字段，字符串，可选值为 \&quot;rating\&quot; 和 \&quot;blockTimes\&quot;&quot;, in = ParameterIn.QUERY),
+            @Parameter(name = &quot;type&quot;, description = &quot;排序类型，可选值为 \&quot;asc\&quot; 和 \&quot;desc\&quot;&quot;, in = ParameterIn.QUERY)
+    })
+    @Operation(summary = &quot;查询骑手列表&quot;, description = &quot;查询骑手列表。可根据姓名查询，或按照违规次数或评分排序&quot;)
+    @GetMapping(&quot;/couriers&quot;)
+    public List&lt;Courier&gt; getCouriers(@RequestParam(defaultValue = &quot;1&quot;) long current,
+                                     @RequestParam(defaultValue = &quot;10&quot;) long size,
+                                     String courierName,
+                                     String order,
+                                     String type) {
+<span class="nc bnc" id="L131" title="All 4 branches missed.">        if (order == null &amp;&amp; type == null)</span>
+<span class="nc" id="L132">            return courierService.page(current, size);</span>
+
+<span class="nc bnc" id="L134" title="All 4 branches missed.">        assert (order != null &amp;&amp; type != null);</span>
+
+<span class="nc bnc" id="L136" title="All 4 branches missed.">        if (order.equals(&quot;rating&quot;) &amp;&amp; type.equals(&quot;asc&quot;))</span>
+<span class="nc" id="L137">            return courierService.pageOrderByRatingAsc(current, size);</span>
+<span class="nc bnc" id="L138" title="All 4 branches missed.">        if (order.equals(&quot;rating&quot;) &amp;&amp; type.equals(&quot;desc&quot;))</span>
+<span class="nc" id="L139">            return courierService.pageOrderByRatingDesc(current, size);</span>
+<span class="nc bnc" id="L140" title="All 4 branches missed.">        if (order.equals(&quot;blockTimes&quot;) &amp;&amp; type.equals(&quot;asc&quot;))</span>
+<span class="nc" id="L141">            return courierService.pageOrderByBlockTimesAsc(current, size);</span>
+<span class="nc bnc" id="L142" title="All 4 branches missed.">        if (order.equals(&quot;blockTimes&quot;) &amp;&amp; type.equals(&quot;desc&quot;))</span>
+<span class="nc" id="L143">            return courierService.pageOrderByBlockTimesDesc(current, size);</span>
+
+<span class="nc bnc" id="L145" title="All 4 branches missed.">        if (courierName == null || courierName.isEmpty())</span>
+<span class="nc" id="L146">            throw new MyException(&quot;检索骑手姓名为空！&quot;);</span>
+<span class="nc" id="L147">        return courierService.page(courierName, current, size);</span>
+    }
+
+    /**
+     * 查询骑手数量
+     *
+     * @return 骑手数量
+     */
+    @Operation(summary = &quot;查询骑手数量&quot;, description = &quot;查询骑手数量&quot;)
+    @GetMapping(&quot;/count/couriers&quot;)
+    public long getCouriersCount() {
+<span class="nc" id="L158">        return courierService.count();</span>
+    }
+
+
+    /**
+     * 查询黑名单列表。可根据骑手姓名查询，或按照创建时间排序
+     *
+     * @param current     当前页码
+     * @param size        每页大小
+     * @param courierName 骑手姓名
+     * @param order       排序字段，可选值为 {@code createdTime}
+     * @param type        排序类型，可选值为 {@code asc} 和 {@code desc}
+     * @return 黑名单列表
+     */
+    @Parameters({
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页码&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;courierName&quot;, description = &quot;骑手姓名&quot;, in = ParameterIn.QUERY),
+            @Parameter(name = &quot;order&quot;, description = &quot;排序字段，可选值为 \&quot;createdTime\&quot;&quot;, in = ParameterIn.QUERY),
+            @Parameter(name = &quot;type&quot;, description = &quot;排序类型，可选值为 \&quot;asc\&quot; 和 \&quot;desc\&quot;&quot;, in = ParameterIn.QUERY)
+    })
+    @Operation(summary = &quot;查询黑名单列表。可根据骑手姓名查询，或按照创建时间排序&quot;, description = &quot;查询黑名单列表。可根据骑手姓名查询，或按照创建时间排序&quot;)
+    @GetMapping(&quot;/blacklists&quot;)
+    public List&lt;Blacklist&gt; getBlacklists(@RequestParam(defaultValue = &quot;1&quot;) long current,
+                                         @RequestParam(defaultValue = &quot;10&quot;) long size,
+                                         String courierName,
+                                         String order,
+                                         String type) {
+<span class="nc bnc" id="L186" title="All 4 branches missed.">        if (order == null &amp;&amp; type == null)</span>
+<span class="nc" id="L187">            return blacklistService.page(current, size);</span>
+
+<span class="nc bnc" id="L189" title="All 4 branches missed.">        assert (order != null &amp;&amp; type != null);</span>
+
+<span class="nc bnc" id="L191" title="All 4 branches missed.">        if (order.equals(&quot;createdTime&quot;) &amp;&amp; type.equals(&quot;asc&quot;))</span>
+<span class="nc" id="L192">            return blacklistService.pageOrderByCreatedTimeAsc(current, size);</span>
+<span class="nc bnc" id="L193" title="All 4 branches missed.">        if (order.equals(&quot;createdTime&quot;) &amp;&amp; type.equals(&quot;desc&quot;))</span>
+<span class="nc" id="L194">            return blacklistService.pageOrderByCreatedTimeDesc(current, size);</span>
+
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        assert (courierName != null);</span>
+<span class="nc" id="L197">        return blacklistService.page(courierName, current, size);</span>
+    }
+
+    /**
+     * 查询黑名单内当前骑手数量
+     *
+     * @return 黑名单内当前骑手数量
+     */
+    @Operation(summary = &quot;查询黑名单内当前骑手数量&quot;, description = &quot;查询黑名单内当前骑手数量&quot;)
+    @GetMapping(&quot;/count/blacklists&quot;)
+    public long getBlacklistsCount() {
+<span class="nc" id="L208">        return blacklistService.count();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

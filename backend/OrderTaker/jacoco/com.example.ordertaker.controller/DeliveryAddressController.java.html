@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeliveryAddressController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">DeliveryAddressController.java</span></div><h1>DeliveryAddressController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import com.example.ordertaker.entity.DeliveryAddress;
+import com.example.ordertaker.service.DeliveryAddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Tag(name = &quot;收货地址接口&quot;, description = &quot;/api/deliveryAddress&quot;)
+@RestController
+@RequestMapping(&quot;/api/deliveryAddress&quot;)
+<span class="nc" id="L18">public class DeliveryAddressController {</span>
+
+    @Autowired
+    private DeliveryAddressService deliveryAddressService;
+
+    /**
+     * 新建收货地址
+     *
+     * @param deliveryAddress 收货地址，必须有clientId,address,phoneNumber,receiver
+     * @return 是否成功插入
+     */
+    @Operation(summary = &quot;新建收货地址&quot;, description = &quot;新建收货地址&quot;)
+    @Parameter(name = &quot;deliveryAddress&quot;, description = &quot;收货地址，必须有clientId,address,phoneNumber,receiver&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/add&quot;)
+    public boolean addDeliveryAddress(@RequestBody DeliveryAddress deliveryAddress) {
+<span class="nc" id="L33">        return deliveryAddressService.save(deliveryAddress);</span>
+    }
+
+    /**
+     * 通过id获取地址
+     *
+     * @param id 地址id
+     * @return 地址
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;地址id&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;通过id获取地址&quot;, description = &quot;通过id获取地址&quot;)
+    @GetMapping(&quot;/get&quot;)
+    public DeliveryAddress get(@RequestParam Long id) {
+<span class="nc" id="L46">        return deliveryAddressService.getById(id);</span>
+    }
+
+
+    /**
+     * 通过client的ID获取该client的所有地址
+     *
+     * @param clientId 用户Id
+     * @param current  当前页
+     * @param size     每页大小
+     * @return 所有地址
+     */
+    @Parameters({
+            @Parameter(name = &quot;clientId&quot;, description = &quot;用户Id&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;current&quot;, description = &quot;当前页&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;size&quot;, description = &quot;每页大小&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;通过client的ID获取该client的所有地址&quot;, description = &quot;通过client的ID获取该client的所有地址&quot;)
+    @GetMapping(&quot;/page&quot;)
+    public List&lt;DeliveryAddress&gt; page(@RequestParam long clientId,
+                                      @RequestParam(defaultValue = &quot;1&quot;) long current,
+                                      @RequestParam(defaultValue = &quot;10&quot;) long size) {
+<span class="nc" id="L68">        return deliveryAddressService.page(clientId, current, size);</span>
+    }
+
+    /**
+     * 通过client的ID获取该client的所有地址的数量
+     *
+     * @param clientId 用户Id
+     * @return 所有地址的数量
+     */
+    @Parameter(name = &quot;clientId&quot;, description = &quot;用户Id&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;通过client的ID获取该client的所有地址的数量&quot;, description = &quot;通过client的ID获取该client的所有地址的数量&quot;)
+    @GetMapping(&quot;/count&quot;)
+    public long count(@RequestParam long clientId) {
+<span class="nc" id="L81">        return deliveryAddressService.count(clientId);</span>
+    }
+
+    /**
+     * 通过id删除地址
+     *
+     * @param id 地址id
+     * @return 是否成功删除
+     */
+    @Parameter(name = &quot;id&quot;, description = &quot;地址id&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;通过id删除地址&quot;, description = &quot;通过id删除地址&quot;)
+    @DeleteMapping(&quot;/delete&quot;)
+    public boolean delete(@RequestParam Long id) {
+<span class="nc" id="L94">        return deliveryAddressService.removeById(id);</span>
+    }
+
+    /**
+     * 更新地址
+     *
+     * @param deliveryAddress 地址，必须包含主键id
+     * @return 是否成功更新
+     */
+    @Operation(summary = &quot;更新地址&quot;, description = &quot;更新地址&quot;)
+    @Parameter(name = &quot;deliveryAddress&quot;, description = &quot;地址，必须包含主键id&quot;, in = ParameterIn.QUERY, required = true)
+    @PostMapping(&quot;/update&quot;)
+    public boolean update(@RequestBody DeliveryAddress deliveryAddress) {
+<span class="nc" id="L107">        return deliveryAddressService.updateById(deliveryAddress);</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

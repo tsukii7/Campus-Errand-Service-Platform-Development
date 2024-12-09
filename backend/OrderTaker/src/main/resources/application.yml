@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/order_taker?allowPublicKeyRetrieval=true&userSSL=true&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai
+    username: root
+    password: ksco017
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    check-template: false
+    check-template-location: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  profiles:
+    active: dev
+
+  devtools:
+    livereload:
+      port: 35731
+
+springdoc:
+  swagger-ui:
+    path: /api.html
+    enabled: true
+
+
+#server:
+#  port: 9433
+
+
+
+
+
+

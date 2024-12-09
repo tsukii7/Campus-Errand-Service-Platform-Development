@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.service.impl</a> &gt; <span class="el_source">OrderServiceImpl.java</span></div><h1>OrderServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.ordertaker.AOP.exceptionInfo.MyException;
+import com.example.ordertaker.constant.CurrentStatusEnum;
+import com.example.ordertaker.constant.ServiceTypeEnum;
+import com.example.ordertaker.entity.Order;
+import com.example.ordertaker.entity.OrderTracking;
+import com.example.ordertaker.mapper.OrderMapper;
+import com.example.ordertaker.service.OrderService;
+import com.example.ordertaker.service.OrderTrackingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+<span class="fc" id="L22">@Service</span>
+<span class="fc" id="L23">public class OrderServiceImpl extends ServiceImpl&lt;OrderMapper, Order&gt; implements OrderService {</span>
+
+    @Autowired
+    OrderTrackingService orderTrackingService;
+
+    // @Autowired
+    // private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Override
+    public boolean save(Order order) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if (order.getClientId() == null</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                || order.getDeliveryAddressId() == null)</span>
+<span class="nc" id="L38">            throw new MyException(&quot;订单信息不完整&quot;);</span>
+
+<span class="fc" id="L40">        super.save(order);</span>
+
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (order.getCurrentStatus() == null)</span>
+<span class="nc" id="L43">            order.setCurrentStatus(CurrentStatusEnum.PLACED);</span>
+
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (order.getOrderTrackingId() == null) {</span>
+<span class="nc" id="L46">            OrderTracking orderTracking = new OrderTracking();</span>
+<span class="nc" id="L47">            orderTracking.setOrderId(order.getId());</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">            if (order.getServiceType() == ServiceTypeEnum.TAKEOUT) {</span>
+<span class="nc" id="L49">                orderTracking.setPlacedTime(order.getEstimatedArrivedTime());</span>
+            }
+<span class="nc" id="L51">            orderTrackingService.save(orderTracking);</span>
+<span class="nc" id="L52">            order.setOrderTrackingId(orderTracking.getId());</span>
+        }
+
+<span class="fc" id="L55">        return super.updateById(order);</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L60">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L63">                        .eq(Order::getClientId, clientId)</span>
+<span class="nc" id="L64">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageByCourierId(Long courierId, long current, long size) {
+<span class="pc" id="L69">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L72">                        .eq(Order::getCourierId, courierId)</span>
+<span class="nc" id="L73">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageTakeoutByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L78">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L81">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L82">                        .eq(Order::getServiceType, ServiceTypeEnum.TAKEOUT)</span>
+<span class="nc" id="L83">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageExpressByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L88">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L91">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L92">                        .eq(Order::getServiceType, ServiceTypeEnum.EXPRESS)</span>
+<span class="nc" id="L93">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageFlashByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L98">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L101">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L102">                        .eq(Order::getServiceType, ServiceTypeEnum.FLASH)</span>
+<span class="nc" id="L103">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; unacceptedByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L108">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L111">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L112">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.PLACED)</span>
+<span class="nc" id="L113">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; unacceptedAll(long current, long size) {
+<span class="pc" id="L118">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L121">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.PLACED)</span>
+<span class="nc" id="L122">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageUnconfirmedByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L127">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L130">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L131">                        .and(orderLambdaQueryWrapper -&gt; orderLambdaQueryWrapper</span>
+<span class="fc" id="L132">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.ACCEPTED)</span>
+<span class="fc" id="L133">                                .or()</span>
+<span class="fc" id="L134">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.TRANSITING)</span>
+<span class="fc" id="L135">                                .or()</span>
+<span class="fc" id="L136">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.OVERDUE)</span>
+<span class="fc" id="L137">                                .or()</span>
+<span class="fc" id="L138">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.DELIVERED)</span>
+                        )
+<span class="nc" id="L140">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageConfirmedByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L145">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L148">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L149">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.CONFIRMED)</span>
+<span class="nc" id="L150">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageCancelledByClientId(Long clientId, long current, long size) {
+<span class="pc" id="L155">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L158">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L159">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.CANCELLED)</span>
+<span class="nc" id="L160">        ).getRecords();</span>
+    }
+
+    @Override
+    public Date updateStatus(Long id, CurrentStatusEnum currentStatus, Long courierId) {
+<span class="pc bpc" id="L165" title="2 of 4 branches missed.">        if (id == null || currentStatus == null)</span>
+<span class="nc" id="L166">            throw new MyException(&quot;订单信息不完整&quot;);</span>
+
+<span class="fc" id="L168">        OrderTracking orderTracking = orderTrackingService.getById(id);</span>
+<span class="fc" id="L169">        Order order = super.getById(id);</span>
+<span class="pc bpc" id="L170" title="3 of 4 branches missed.">        if (!(currentStatus == CurrentStatusEnum.TRANSITING &amp;&amp; order.getCurrentStatus() == CurrentStatusEnum.OVERDUE))</span>
+<span class="nc" id="L171">            order.setCurrentStatus(currentStatus);</span>
+
+<span class="nc" id="L173">        boolean succeed = super.updateById(order);</span>
+
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (succeed) {</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if (orderTracking == null)</span>
+<span class="nc" id="L177">                throw new MyException(&quot;订单跟踪信息不存在&quot;);</span>
+
+<span class="nc" id="L179">            Date time = new Date();</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">            if (currentStatus == CurrentStatusEnum.ACCEPTED) {</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                assert (courierId != null);</span>
+<span class="nc" id="L182">                order.setCourierId(courierId);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            } else if (currentStatus == CurrentStatusEnum.TRANSITING) {</span>
+<span class="nc" id="L184">                orderTracking.setTransitedTime(time);</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">            } else if (currentStatus == CurrentStatusEnum.DELIVERED) {</span>
+<span class="nc" id="L186">                orderTracking.setArrivedTime(time);</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">            } else if (currentStatus == CurrentStatusEnum.CONFIRMED) {</span>
+<span class="nc" id="L188">                orderTracking.setConfirmedTime(time);</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            } else if (currentStatus == CurrentStatusEnum.CANCELLED) {</span>
+<span class="nc" id="L190">                orderTracking.setCancelledTime(time);</span>
+            }
+
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if (orderTrackingService.updateById(orderTracking)</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">                    &amp;&amp; super.updateById(order))</span>
+<span class="nc" id="L195">                return time;</span>
+            else
+<span class="nc" id="L197">                throw new MyException(&quot;更新订单跟踪信息失败&quot;);</span>
+        } else {
+<span class="nc" id="L199">            throw new MyException(&quot;更新订单状态失败&quot;);</span>
+        }
+    }
+
+    @Override
+    public boolean updateReviewId(Long orderId, Long reviewId) {
+<span class="pc bpc" id="L205" title="2 of 4 branches missed.">        if (orderId == null || reviewId == null)</span>
+<span class="nc" id="L206">            throw new MyException(&quot;订单信息不完整&quot;);</span>
+
+<span class="fc" id="L208">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;Order&gt;()
+<span class="fc" id="L210">                        .eq(Order::getId, orderId)</span>
+<span class="fc" id="L211">                        .set(Order::getReviewId, reviewId)</span>
+        );
+    }
+
+    @Override
+    public boolean removeReviewId(Long orderId) {
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">        if (orderId == null)</span>
+<span class="nc" id="L218">            throw new MyException(&quot;订单信息不完整&quot;);</span>
+
+<span class="fc" id="L220">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;Order&gt;()
+<span class="fc" id="L222">                        .eq(Order::getId, orderId)</span>
+<span class="fc" id="L223">                        .set(Order::getReviewId, null)</span>
+        );
+    }
+
+    @Override
+    public boolean updatePaymentId(Long orderId, Long paymentId) {
+<span class="pc bpc" id="L229" title="2 of 4 branches missed.">        if (orderId == null || paymentId == null)</span>
+<span class="nc" id="L230">            throw new MyException(&quot;订单信息不完整&quot;);</span>
+
+<span class="fc" id="L232">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;Order&gt;()
+<span class="fc" id="L234">                        .eq(Order::getId, orderId)</span>
+<span class="fc" id="L235">                        .set(Order::getPaymentId, paymentId)</span>
+        );
+    }
+
+    @Override
+    public boolean updateOrderTrackingId(Long orderId, Long orderTrackingId) {
+<span class="pc bpc" id="L241" title="2 of 4 branches missed.">        if (orderId == null || orderTrackingId == null)</span>
+<span class="nc" id="L242">            throw new MyException(&quot;订单信息不完整&quot;);</span>
+
+<span class="fc" id="L244">        return super.update(</span>
+                new LambdaUpdateWrapper&lt;Order&gt;()
+<span class="fc" id="L246">                        .eq(Order::getId, orderId)</span>
+<span class="fc" id="L247">                        .set(Order::getOrderTrackingId, orderTrackingId)</span>
+        );
+    }
+
+    @Override
+    public long countByClientId(Long clientId) {
+<span class="fc" id="L253">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L255">                        .eq(Order::getClientId, clientId)</span>
+        );
+    }
+
+    @Override
+    public long countByCourierId(Long courier) {
+<span class="fc" id="L261">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L263">                        .eq(Order::getCourierId, courier)</span>
+        );
+    }
+
+    @Override
+    public long countTakeoutByClientId(Long clientId) {
+<span class="fc" id="L269">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L271">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L272">                        .eq(Order::getServiceType, ServiceTypeEnum.TAKEOUT)</span>
+        );
+    }
+
+    @Override
+    public long countExpressByClientId(Long clientId) {
+<span class="fc" id="L278">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L280">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L281">                        .eq(Order::getServiceType, ServiceTypeEnum.EXPRESS)</span>
+        );
+    }
+
+    @Override
+    public long countFlashByClientId(Long clientId) {
+<span class="fc" id="L287">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L289">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L290">                        .eq(Order::getServiceType, ServiceTypeEnum.FLASH)</span>
+        );
+    }
+
+    @Override
+    public long countUnconfirmedByClientId(Long clientId) {
+<span class="fc" id="L296">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L298">                        .eq(Order::getClientId, clientId)</span>
+<span class="fc" id="L299">                        .and(orderLambdaQueryWrapper -&gt; orderLambdaQueryWrapper</span>
+<span class="fc" id="L300">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.ACCEPTED)</span>
+<span class="fc" id="L301">                                .or()</span>
+<span class="fc" id="L302">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.TRANSITING)</span>
+<span class="fc" id="L303">                                .or()</span>
+<span class="fc" id="L304">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.OVERDUE)</span>
+<span class="fc" id="L305">                                .or()</span>
+<span class="fc" id="L306">                                .eq(Order::getCurrentStatus, CurrentStatusEnum.DELIVERED)</span>
+                        )
+        );
+    }
+
+    @Override
+    public List&lt;Order&gt; pageUntransittedByCourierId(Long courierId, long current, long size) {
+<span class="fc" id="L313">        List&lt;Order&gt; orders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L314">        orderTrackingService.untransitted()</span>
+<span class="fc" id="L315">                .forEach(orderTracking -&gt; {</span>
+<span class="fc" id="L316">                    Order order = super.getById(orderTracking.getOrderId());</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">                    if (order.getCourierId().equals(courierId))</span>
+<span class="nc" id="L318">                        orders.add(order);</span>
+<span class="nc" id="L319">                });</span>
+<span class="fc" id="L320">        List&lt;Order&gt; filtered = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        for (int i = 0; i &lt; size; i++) {</span>
+<span class="nc" id="L322">            long index = (current - 1) * size + i;</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">            if (index &lt; orders.size())</span>
+<span class="nc" id="L324">                filtered.add(orders.get((int) index));</span>
+        }
+<span class="fc" id="L326">        return filtered;</span>
+    }
+
+    @Override
+    public long countUntransittedByCourierId(Long courierId) {
+<span class="fc" id="L331">        List&lt;Order&gt; orders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L332">        orderTrackingService.untransitted()</span>
+<span class="fc" id="L333">                .forEach(orderTracking -&gt; {</span>
+<span class="fc" id="L334">                    Order order = super.getById(orderTracking.getOrderId());</span>
+<span class="nc bnc" id="L335" title="All 2 branches missed.">                    if (order.getCourierId().equals(courierId))</span>
+<span class="nc" id="L336">                        orders.add(order);</span>
+<span class="nc" id="L337">                });</span>
+<span class="fc" id="L338">        return orders.size();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageTransittingByCourierId(Long courierId, long current, long size) {
+<span class="fc" id="L343">        List&lt;Order&gt; orders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L344">        orderTrackingService.transitting()</span>
+<span class="fc" id="L345">                .forEach(orderTracking -&gt; {</span>
+<span class="fc" id="L346">                    Order order = super.getById(orderTracking.getOrderId());</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">                    if (order.getCourierId().equals(courierId))</span>
+<span class="nc" id="L348">                        orders.add(order);</span>
+<span class="nc" id="L349">                });</span>
+<span class="fc" id="L350">        List&lt;Order&gt; filtered = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">        for (int i = 0; i &lt; size; i++) {</span>
+<span class="nc" id="L352">            long index = (current - 1) * size + i;</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">            if (index &lt; orders.size())</span>
+<span class="nc" id="L354">                filtered.add(orders.get((int) index));</span>
+            else
+                break;
+        }
+<span class="fc" id="L358">        return filtered;</span>
+    }
+
+    @Override
+    public long countTransittingByCourierId(Long courierId) {
+<span class="fc" id="L363">        List&lt;Order&gt; orders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L364">        orderTrackingService.transitting()</span>
+<span class="fc" id="L365">                .forEach(orderTracking -&gt; {</span>
+<span class="fc" id="L366">                    Order order = super.getById(orderTracking.getOrderId());</span>
+<span class="nc bnc" id="L367" title="All 2 branches missed.">                    if (order.getCourierId().equals(courierId))</span>
+<span class="nc" id="L368">                        orders.add(order);</span>
+<span class="nc" id="L369">                });</span>
+<span class="fc" id="L370">        return orders.size();</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; pageArrivedByCourierId(Long courierId, long current, long size) {
+<span class="pc" id="L375">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L378">                        .eq(Order::getCourierId, courierId)</span>
+<span class="fc" id="L379">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.DELIVERED)</span>
+<span class="nc" id="L380">        ).getRecords();</span>
+    }
+
+    @Override
+    public long countArrivedByCourierId(Long courierId) {
+<span class="fc" id="L385">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L387">                        .eq(Order::getCourierId, courierId)</span>
+<span class="fc" id="L388">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.DELIVERED)</span>
+        );
+    }
+
+    @Override
+    public List&lt;Order&gt; pageConfirmedByCourierId(Long courierId, long current, long size) {
+<span class="pc" id="L394">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L397">                        .eq(Order::getCourierId, courierId)</span>
+<span class="fc" id="L398">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.CONFIRMED)</span>
+<span class="nc" id="L399">        ).getRecords();</span>
+    }
+
+    @Override
+    public long countConfirmedByCourierId(Long courierId) {
+<span class="fc" id="L404">        return super.count(</span>
+                new LambdaQueryWrapper&lt;Order&gt;()
+<span class="fc" id="L406">                        .eq(Order::getCourierId, courierId)</span>
+<span class="fc" id="L407">                        .eq(Order::getCurrentStatus, CurrentStatusEnum.CONFIRMED)</span>
+        );
+    }
+
+    @Override
+    public void checkStatus() {
+<span class="fc" id="L413">        orderMapper.checkStatus();</span>
+<span class="fc" id="L414">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

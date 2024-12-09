@@ -1,0 +1,11 @@
+<!--pages/login/login.wxml-->
+
+<text style="position: relative; left: 135rpx; top: 29rpx; font-size: 30px">校园跑腿服务平台</text>
+
+<image style="width: 230rpx; height: 230rpx; display: inline-block; box-sizing: border-box; position: relative; left: -220rpx; top: 340rpx; border-radius: 50%; overflow: hidden" src="https://i.postimg.cc/y6jxx7y2/2.jpg" mode="" bindtap="tryAdmin"/>
+
+<button style="position: relative; left: 0rpx; top: 416rpx; width: 318rpx; height: 92rpx; display: block; box-sizing: border-box" bindtap="user_login"> 用户登录 </button>
+
+<button style="position: relative; left: 0rpx; top: 464rpx; width: 318rpx; height: 92rpx; display: block; box-sizing: border-box" bindtap="rider_login"> 骑手登录 </button>
+
+<button style="position: relative; left: 0rpx; top: 512rpx; width: 318rpx; height: 92rpx; display: block; box-sizing: border-box" bindtap="sign_up"> 注册 </button>

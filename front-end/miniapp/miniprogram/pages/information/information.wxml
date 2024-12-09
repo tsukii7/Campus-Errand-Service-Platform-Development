@@ -1,0 +1,27 @@
+<!--pages/information/information.wxml-->
+<view class="v1">
+ 
+ <!-- v2父容器  子view使用绝对布局 -->
+   <view class="v2">
+     <view class="dltext">修改个人信息</view>
+  
+    <!--头像-->
+    <view class="photo">
+    <view class="photoLabel">上传头像</view>
+    <image style="width: 160rpx; height: 160rpx; display: inline-block; box-sizing: border-box; position: relative; left: 380rpx; top: -50rpx; border-radius: 50%; overflow: hidden;" class="image" src="{{imgPath}}" mode="scaleToFill" bindtap="selectImg"/>
+    <view class="separate"></view>
+    </view>
+
+    <!--昵称-->
+    <view class="name">
+    <view class="nameLabel">用户名</view>
+    <input placeholder="请输入用户名" bindchange="onNameChange" />
+    <view class="separate"></view>
+    </view>
+  
+     <!-- 确认修改按钮 -->
+     <view class="changeInfo" bindtap="changeInfo">
+      确认修改
+    </view>
+   </view>
+ </view>

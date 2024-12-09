@@ -1,0 +1,35 @@
+<!--pages/addAddress/addAddress.wxml-->
+<view class="v1">
+ 
+ <!-- v2父容器  子view使用绝对布局 -->
+   <view class="v2">
+     <view class="dltext">添加收货地址</view>
+  
+    <!--收货人-->
+    <view class="receiver">
+    <view class="receiverLabel">收货人</view>
+    <input placeholder="请输入收货人姓名" bindchange="onReceiverChange"/>
+    <view class="separate"></view>
+    </view>
+
+    <!--电话-->
+    <view class="phone">
+    <view class="phoneLabel">联系电话</view>
+    <input placeholder="请输入联系电话" bindchange="onPhoneChange" />
+    <view class="separate"></view>
+    </view>
+
+    <!--地址-->
+    <view class="address">
+    <view class="addressLabel">收货地址</view>
+    <input placeholder="请输入收货地址" bindchange="onAddressChange"/>
+    <view class="separate"></view>
+    </view>
+     
+  
+     <!-- 确认添加地址按钮 -->
+     <view class="addAddress" bindtap="addAddress">
+      确认添加
+    </view>
+   </view>
+ </view>

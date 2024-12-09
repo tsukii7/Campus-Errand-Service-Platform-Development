@@ -1,0 +1,198 @@
+<!--pages/ordersForUser/ordersForUser.wxml-->
+<scroll-view scroll-x="true" class="navbar" scroll-left="{{navScrollLeft}}" scroll-with-animation="{{true}}">
+  <block wx:for="{{navbar}}" wx:for-index="idx" wx:for-item="navItem" wx:key="idx">
+      <view class="item {{currentTab == idx ?'active':''}}"  data-current="{{idx}}" bindtap="navbarTap">{{navItem}}</view>
+  </block>        
+</scroll-view>
+
+<view style="position: absolute; width: 750rpx; height: 100vh; background-color: #efefef;">
+  <swiper circular current="{{currentTab}}" bindchange="switchNav" style="position: relative; height: 100vh; background-color: #efefef;">
+
+    <!-- 全部页面 -->
+    <swiper-item class="orderList" style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; left: 0rpx; top: 80rpx">
+      <scroll-view scroll-y="true" scroll-x="false" style="left: 0rpx; top: 2rpx; width: 750rpx; height: 85vh; display: block; box-sizing: border-box" bindscrolltolower="onScrollToLowerAll">
+        <navigator class="orderListItem" wx:for="{{ordersStatusAll}}" wx:key="id" style="position: relative; left: 25rpx; top: 0rpx" url="/pages/userOrder/userOrder?id={{item.id}}">
+          <view class="itemType" style="width: 148rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 22rpx; text-align: center">
+            {{item.serviceType === '外卖' ? '外卖代取' : (item.serviceType === '快递' ? '快递代取' : '闪送服务')}}
+          </view>
+          <view class="itemAddress" style="width: 270rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 178rpx; top: -26rpx; font-size: 28rpx; text-align: center">
+            <!-- {{item.restaurant}}   ￥{{item.totalPrice}} -->
+            {{item.serviceType === '外卖' ? item.restaurant + '  ￥' + item.totalPrice : (item.serviceType === '快递' ? item.pickUpCode : ' ')}}
+          </view>
+          <view class="itemStatus" style="width: 270rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 430rpx; top: -120rpx;">
+            <text hidden="{{item.currentStatus !== '已下单'}}" style="color: grey; font-size: 30rpx; position: relative; left: 46rpx; top: 46rpx">等待骑手接单</text>
+            <image style="position: relative; left: 34rpx; top: 34rpx; border-radius: 50%; overflow: hidden;" hidden="{{item.currentStatus === '已下单'}}" src="{{item.courier.avatarUrl}}"/>
+            <text hidden="{{item.currentStatus === '已下单'}}" style="position: relative; left: 135rpx; top: -30rpx; font-size: 30rpx; color: {{item.currentStatus === '已取消' ? 'red' : (item.currentStatus === '已超时' ? 'orange' : (item.currentStatus === '已送达' ? 'black' : 'grey'))}}; font-weight: {{item.currentStatus === '已送达' ? 'bold' : 'normal'}};">
+              {{item.currentStatus}} 
+            </text>
+          </view>
+          <view style="width: 700rpx; height: 120rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: -72rpx; border-top: 1rpx solid grey">
+            <image style="width: 80rpx; height: 80rpx; display: inline-block; box-sizing: border-box; position: relative; left: 52rpx; top: 15rpx" src="{{iconPath[item.serviceType === '外卖' ? 0 : (item.serviceType === '快递' ? 1 : 2)]}}" mode=""/>
+          </view>
+          <view style="width: 374rpx; height: 86rpx; display: flex; box-sizing: border-box; position: relative; left: 150rpx; top: -180rpx; justify-content: center; align-items: center; border: 1rpx solid grey; border-radius: 50rpx">
+            <!-- {{shortInfo.shortInfo(item.description)}} -->
+            {{item.description}}
+          </view>
+          <view style="width: 106rpx; height: 58rpx; display: flex; box-sizing: border-box; position: relative; left: 564rpx; top: -264rpx; justify-content: center; align-items: center; font-size: 20px; font-weight: bold;">
+          ￥{{item.fee}}
+          </view>
+          <view style="width: 242rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 458rpx; top: -253rpx; display: flex; justify-content: center; align-items: center; font-size: 12px; color: grey">
+            {{shortInfo.shortTime(item.expectedArrivedTime)}}
+          </view>
+        </navigator>
+        <text style="position: relative; top: 30rpx; left: 300rpx; color: #888888; font-size: 14px;">无更多订单</text>
+      </scroll-view>
+    </swiper-item>
+
+    <!-- 待接单页面 -->
+    <swiper-item class="orderList" style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; left: 0rpx; top: 80rpx">
+      <scroll-view scroll-y="true" scroll-x="false" style="left: 0rpx; top: 2rpx; width: 750rpx; height: 85vh; display: block; box-sizing: border-box" bindscrolltolower="onScrollToLower0">
+        <navigator class="orderListItem" wx:for="{{ordersStatus0}}" wx:key="id" style="position: relative; left: 25rpx; top: 0rpx" url="/pages/userOrder/userOrder?id={{item.id}}">
+          <view class="itemType" style="width: 148rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 22rpx; text-align: center">
+            {{item.serviceType === '外卖' ? '外卖代取' : (item.serviceType === '快递' ? '快递代取' : '闪送服务')}}
+          </view>
+          <view class="itemAddress" style="width: 270rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 178rpx; top: -26rpx; font-size: 28rpx; text-align: center">
+            {{item.serviceType === '外卖' ? item.restaurant + '  ￥' + item.totalPrice : (item.serviceType === '快递' ? item.pickUpcode : ' ')}}
+          </view>
+          <view class="itemStatus" style="width: 270rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 430rpx; top: -120rpx;">
+            <text hidden="{{item.currentStatus !== '已下单'}}" style="color: grey; font-size: 30rpx; position: relative; left: 46rpx; top: 46rpx">等待骑手接单</text>
+            <image style="position: relative; left: 34rpx; top: 40rpx; border-radius: 50%; overflow: hidden;" hidden="{{item.currentStatus === '已下单'}}" src="{{item.courier.avatarUrl}}"/>
+            <text hidden="{{item.currentStatus === '已下单'}}" style="position: relative; left: 135rpx; top: -30rpx; font-size: 30rpx; color: {{item.currentStatus === '已取消' ? 'red' : (item.currentStatus === '已超时' ? 'orange' : (item.currentStatus === '已送达' ? 'black' : 'grey'))}}; font-weight: {{item.currentStatus === '已送达' ? 'bold' : 'normal'}};">
+              {{item.currentStatus}} 
+            </text>
+          </view>
+          <view style="width: 700rpx; height: 120rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: -72rpx; border-top: 1rpx solid grey">
+            <image style="width: 80rpx; height: 80rpx; display: inline-block; box-sizing: border-box; position: relative; left: 52rpx; top: 15rpx" src="{{iconPath[item.serviceType === '外卖' ? 0 : (item.serviceType === '快递' ? 1 : 2)]}}" mode=""/>
+          </view>
+          <view style="width: 374rpx; height: 86rpx; display: flex; box-sizing: border-box; position: relative; left: 150rpx; top: -180rpx; justify-content: center; align-items: center; border: 1rpx solid grey; border-radius: 50rpx">
+            {{shortInfo.shortInfo(item.description)}}
+          </view>
+          <view style="width: 106rpx; height: 58rpx; display: flex; box-sizing: border-box; position: relative; left: 564rpx; top: -264rpx; justify-content: center; align-items: center; font-size: 20px; font-weight: bold;">
+          ￥{{item.fee}}
+          </view>
+          <view style="width: 242rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 458rpx; top: -253rpx; display: flex; justify-content: center; align-items: center; font-size: 12px; color: grey">
+            {{shortInfo.shortTime(item.expectedArrivedTime)}}
+          </view>
+        </navigator>
+        <text style="position: relative; top: 30rpx; left: 300rpx; color: #888888; font-size: 14px;">无更多订单</text>
+      </scroll-view>
+    </swiper-item>
+
+    <!-- 待收货页面 -->
+    <swiper-item class="orderList" style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; left: 0rpx; top: 80rpx">
+      <scroll-view scroll-y="true" scroll-x="false" style="left: 0rpx; top: 2rpx; width: 750rpx; height: 85vh; display: block; box-sizing: border-box" bindscrolltolower="onScrollToLower1">
+        <navigator class="orderListItem" wx:for="{{ordersStatus1}}" wx:key="id" style="position: relative; left: 25rpx; top: 0rpx" url="/pages/userOrder/userOrder?id={{item.id}}">
+          <view class="itemType" style="width: 148rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 22rpx; text-align: center">
+            {{item.serviceType === '外卖' ? '外卖代取' : (item.serviceType === '快递' ? '快递代取' : '闪送服务')}}
+          </view>
+          <view class="itemAddress" style="width: 270rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 178rpx; top: -26rpx; font-size: 28rpx; text-align: center">
+            {{item.serviceType === '外卖' ? item.restaurant + '  ￥' + item.totalPrice : (item.serviceType === '快递' ? item.pickUpcode : ' ')}}
+          </view>
+          <view class="itemStatus" style="width: 270rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 430rpx; top: -120rpx;">
+            <text hidden="{{item.currentStatus !== '已下单'}}" style="color: grey; font-size: 30rpx; position: relative; left: 46rpx; top: 16rpx">等待骑手接单</text>
+            <image style="position: relative; left: 34rpx; top: 40rpx; border-radius: 50%; overflow: hidden;" hidden="{{item.currentStatus === '已下单'}}" src="{{item.courier.avatarUrl}}"/>
+            <text hidden="{{item.currentStatus === '已下单'}}" style="position: relative; left: 135rpx; top: -30rpx; font-size: 30rpx; color: {{item.currentStatus === '已取消' ? 'red' : (item.currentStatus === '已超时' ? 'orange' : (item.currentStatus === '已送达' ? 'black' : 'grey'))}}; font-weight: {{item.currentStatus === '已送达' ? 'bold' : 'normal'}};">
+              {{item.currentStatus}} 
+            </text>
+          </view>
+          <view style="width: 700rpx; height: 120rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: -72rpx; border-top: 1rpx solid grey">
+            <image style="width: 80rpx; height: 80rpx; display: inline-block; box-sizing: border-box; position: relative; left: 52rpx; top: 15rpx" src="{{iconPath[item.serviceType === '外卖' ? 0 : (item.serviceType === '快递' ? 1 : 2)]}}" mode=""/>
+          </view>
+          <view style="width: 374rpx; height: 86rpx; display: flex; box-sizing: border-box; position: relative; left: 150rpx; top: -180rpx; justify-content: center; align-items: center; border: 1rpx solid grey; border-radius: 50rpx">
+            {{shortInfo.shortInfo(item.description)}}
+          </view>
+          <view style="width: 106rpx; height: 58rpx; display: flex; box-sizing: border-box; position: relative; left: 564rpx; top: -264rpx; justify-content: center; align-items: center; font-size: 20px; font-weight: bold;">
+          ￥{{item.fee}}
+          </view>
+          <view style="width: 242rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 458rpx; top: -253rpx; display: flex; justify-content: center; align-items: center; font-size: 12px; color: grey">
+            {{shortInfo.shortTime(item.expectedArrivedTime)}}
+          </view>
+        </navigator>
+        <text style="position: relative; top: 30rpx; left: 300rpx; color: #888888; font-size: 14px;">无更多订单</text>
+      </scroll-view>
+    </swiper-item>
+
+    <!-- 已完成页面 -->
+    <swiper-item class="orderList" style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; left: 0rpx; top: 80rpx">
+      <scroll-view scroll-y="true" scroll-x="false" style="left: 0rpx; top: 2rpx; width: 750rpx; height: 85vh; display: block; box-sizing: border-box" bindscrolltolower="onScrollToLower2">
+        <navigator class="orderListItem" wx:for="{{ordersStatus2}}" wx:key="id" style="position: relative; left: 25rpx; top: 0rpx" url="/pages/userOrder/userOrder?id={{item.id}}">
+          <view class="itemType" style="width: 148rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 22rpx; text-align: center">
+            {{item.serviceType === '外卖' ? '外卖代取' : (item.serviceType === '快递' ? '快递代取' : '闪送服务')}}
+          </view>
+          <view class="itemAddress" style="width: 270rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 178rpx; top: -26rpx; font-size: 28rpx; text-align: center">
+            {{item.serviceType === '外卖' ? item.restaurant + '  ￥' + item.totalPrice : (item.serviceType === '快递' ? item.pickUpcode : ' ')}}
+          </view>
+          <view class="itemStatus" style="width: 270rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 430rpx; top: -120rpx;">
+            <text hidden="{{item.currentStatus !== '已下单'}}" style="color: grey; font-size: 30rpx; position: relative; left: 46rpx; top: 16rpx">等待骑手接单</text>
+            <image style="position: relative; left: 34rpx; top: 40rpx; border-radius: 50%; overflow: hidden;" hidden="{{item.currentStatus === '已下单'}}" src="{{item.courier.avatarUrl}}"/>
+            <text hidden="{{item.currentStatus === '已下单'}}" style="position: relative; left: 135rpx; top: -30rpx; font-size: 30rpx; color: {{item.currentStatus === '已取消' ? 'red' : (item.currentStatus === '已超时' ? 'orange' : (item.currentStatus === '已送达' ? 'black' : 'grey'))}}; font-weight: {{item.currentStatus === '已送达' ? 'bold' : 'normal'}};">
+              {{item.currentStatus}} 
+            </text>
+          </view>
+          <view style="width: 700rpx; height: 120rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: -72rpx; border-top: 1rpx solid grey">
+            <image style="width: 80rpx; height: 80rpx; display: inline-block; box-sizing: border-box; position: relative; left: 52rpx; top: 15rpx" src="{{iconPath[item.serviceType === '外卖' ? 0 : (item.serviceType === '快递' ? 1 : 2)]}}" mode=""/>
+          </view>
+          <view style="width: 374rpx; height: 86rpx; display: flex; box-sizing: border-box; position: relative; left: 150rpx; top: -180rpx; justify-content: center; align-items: center; border: 1rpx solid grey; border-radius: 50rpx">
+            {{shortInfo.shortInfo(item.description)}}
+          </view>
+          <view style="width: 106rpx; height: 58rpx; display: flex; box-sizing: border-box; position: relative; left: 564rpx; top: -264rpx; justify-content: center; align-items: center; font-size: 20px; font-weight: bold;">
+          ￥{{item.fee}}
+          </view>
+          <view style="width: 242rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 458rpx; top: -253rpx; display: flex; justify-content: center; align-items: center; font-size: 12px; color: grey">
+            {{shortInfo.shortTime(item.expectedArrivedTime)}}
+          </view>
+        </navigator>
+        <text style="position: relative; top: 30rpx; left: 300rpx; color: #888888; font-size: 14px;">无更多订单</text>
+      </scroll-view>
+    </swiper-item>
+
+    <!-- 已取消页面 -->
+    <swiper-item class="orderList" style="width: 750rpx; height: 100vh; display: block; box-sizing: border-box; left: 0rpx; top: 80rpx">
+      <scroll-view scroll-y="true" scroll-x="false" style="left: 0rpx; top: 2rpx; width: 750rpx; height: 85vh; display: block; box-sizing: border-box" bindscrolltolower="onScrollToLower3">
+        <navigator class="orderListItem" wx:for="{{ordersStatus3}}" wx:key="id" style="position: relative; left: 25rpx; top: 0rpx" url="/pages/userOrder/userOrder?id={{item.id}}">
+          <view class="itemType" style="width: 148rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 30rpx; top: 22rpx; text-align: center">
+            {{item.serviceType === '外卖' ? '外卖代取' : (item.serviceType === '快递' ? '快递代取' : '闪送服务')}}
+          </view>
+          <view class="itemAddress" style="width: 270rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 178rpx; top: -26rpx; font-size: 28rpx; text-align: center">
+            {{item.serviceType === '外卖' ? item.restaurant + '  ￥' + item.totalPrice : (item.serviceType === '快递' ? item.pickUpcode : ' ')}}
+          </view>
+          <view class="itemStatus" style="width: 270rpx; height: 58rpx; display: block; box-sizing: border-box; position: relative; left: 430rpx; top: -120rpx;">
+            <text hidden="{{item.currentStatus !== '已下单'}}" style="color: grey; font-size: 30rpx; position: relative; left: 46rpx; top: 16rpx">等待骑手接单</text>
+            <image style="position: relative; left: 34rpx; top: 40rpx; border-radius: 50%; overflow: hidden;" hidden="{{item.currentStatus === '已下单'}}" src="{{item.courier.avatarUrl}}"/>
+            <text hidden="{{item.currentStatus === '已下单'}}" style="position: relative; left: 135rpx; top: -30rpx; font-size: 30rpx; color: {{item.currentStatus === '已取消' ? 'red' : (item.currentStatus === '已超时' ? 'orange' : (item.currentStatus === '已送达' ? 'black' : 'grey'))}}; font-weight: {{item.currentStatus === '已送达' ? 'bold' : 'normal'}};">
+              {{item.currentStatus}} 
+            </text>
+          </view>
+          <view style="width: 700rpx; height: 120rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: -72rpx; border-top: 1rpx solid grey">
+            <image style="width: 80rpx; height: 80rpx; display: inline-block; box-sizing: border-box; position: relative; left: 52rpx; top: 15rpx" src="{{iconPath[item.serviceType === '外卖' ? 0 : (item.serviceType === '快递' ? 1 : 2)]}}" mode=""/>
+          </view>
+          <view style="width: 374rpx; height: 86rpx; display: flex; box-sizing: border-box; position: relative; left: 150rpx; top: -180rpx; justify-content: center; align-items: center; border: 1rpx solid grey; border-radius: 50rpx">
+            {{shortInfo.shortInfo(item.description)}}
+          </view>
+          <view style="width: 106rpx; height: 58rpx; display: flex; box-sizing: border-box; position: relative; left: 564rpx; top: -264rpx; justify-content: center; align-items: center; font-size: 20px; font-weight: bold;">
+          ￥{{item.fee}}
+          </view>
+          <view style="width: 242rpx; height: 36rpx; display: block; box-sizing: border-box; position: relative; left: 458rpx; top: -253rpx; display: flex; justify-content: center; align-items: center; font-size: 12px; color: grey">
+            {{shortInfo.shortTime(item.expectedArrivedTime)}}
+          </view>
+        </navigator>
+        <text style="position: relative; top: 30rpx; left: 300rpx; color: #888888; font-size: 14px;">无更多订单</text>
+      </scroll-view>
+    </swiper-item>
+
+  </swiper>
+</view>
+
+<wxs module="shortInfo">
+  // 如果信息长度大于9，展示信息的前9位+省略号
+  module.exports.shortInfo=function(str) {
+    if(str === null) return str
+    if(str.length <= 13) return str
+    return str.split('').splice(0,13).join('') + '...'
+  }
+  module.exports.shortTime=function(str) {
+    str1 = str.split('').splice(5,5).join('')
+    str2 = str.split('').splice(11,5).join('')
+    return str1 + ' ' + str2
+  }
+</wxs>

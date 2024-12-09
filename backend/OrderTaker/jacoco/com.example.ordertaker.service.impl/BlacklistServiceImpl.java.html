@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BlacklistServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.service.impl</a> &gt; <span class="el_source">BlacklistServiceImpl.java</span></div><h1>BlacklistServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.ordertaker.entity.Blacklist;
+import com.example.ordertaker.entity.Courier;
+import com.example.ordertaker.AOP.exceptionInfo.MyException;
+import com.example.ordertaker.mapper.BlacklistMapper;
+import com.example.ordertaker.service.BlacklistService;
+import com.example.ordertaker.service.CourierService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L19">public class BlacklistServiceImpl extends ServiceImpl&lt;BlacklistMapper, Blacklist&gt; implements BlacklistService {</span>
+
+    @Autowired
+    @Lazy
+    private CourierService courierService;
+
+    @Override
+    public List&lt;Blacklist&gt; page(long current, long size) {
+<span class="nc" id="L27">        return super.page(new Page&lt;&gt;(current, size)).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Blacklist&gt; page(String courierName, long current, long size) {
+<span class="pc bpc" id="L32" title="2 of 4 branches missed.">        if (courierName == null || courierName.isEmpty())</span>
+<span class="nc" id="L33">            throw new MyException(&quot;骑手姓名为空！&quot;);</span>
+
+<span class="pc" id="L35">        return super.page(</span>
+                new Page&lt;&gt;(current, size),
+                new LambdaQueryWrapper&lt;Blacklist&gt;()
+<span class="fc" id="L38">                        .in(Blacklist::getCourierId, courierService</span>
+<span class="fc" id="L39">                                .list(new LambdaQueryWrapper&lt;Courier&gt;()</span>
+<span class="fc" id="L40">                                        .select(Courier::getId)</span>
+<span class="fc" id="L41">                                        .eq(Courier::getCourierName, courierName)</span>
+                                ))
+<span class="nc" id="L43">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Blacklist&gt; pageOrderByCreatedTimeAsc(long current, long size) {
+<span class="pc" id="L48">        return super.page(new Page&lt;&gt;(current, size),</span>
+                new LambdaQueryWrapper&lt;Blacklist&gt;()
+<span class="fc" id="L50">                        .orderByAsc(Blacklist::getCreatedTime)</span>
+<span class="nc" id="L51">        ).getRecords();</span>
+    }
+
+    @Override
+    public List&lt;Blacklist&gt; pageOrderByCreatedTimeDesc(long current, long size) {
+<span class="pc" id="L56">        return super.page(new Page&lt;&gt;(current, size),</span>
+                new LambdaQueryWrapper&lt;Blacklist&gt;()
+<span class="fc" id="L58">                        .orderByDesc(Blacklist::getCreatedTime)</span>
+<span class="nc" id="L59">        ).getRecords();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

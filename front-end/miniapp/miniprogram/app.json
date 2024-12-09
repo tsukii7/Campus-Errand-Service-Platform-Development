@@ -1,0 +1,60 @@
+{
+  "pages":[
+    "pages/login/login",
+    "pages/userLogin/userLogin",
+    "pages/riderLogin/riderLogin",
+    "pages/sighUp/sighUp",
+    "pages/ordering/ordering",
+    "pages/takingOrder/takingOrder",
+    "pages/ordersForUser/ordersForUser",
+    "pages/ordersForRider/ordersForRider",
+    "pages/user/user",
+    "pages/userOrder/userOrder",
+    "pages/riderOrder/riderOrder",
+    "pages/takeoutOrder/takeoutOrder",
+    "pages/deliveryOrder/deliveryOrder",
+    "pages/flashOrder/flashOrder",
+    "pages/admin/admin",
+    "pages/adminLogin/adminLogin",
+    "pages/addAddress/addAddress",
+    "pages/modifyAddress/modifyAddress",
+    "pages/information/information"
+  ],
+  "window":{
+    "backgroundTextStyle":"dark",
+    "backgroundColor": "#efefef",
+    "navigationBarBackgroundColor": "#ff9900",
+    "navigationBarTitleText": "校园跑腿服务平台",
+    "navigationBarTextStyle":"white"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#7A7E83",
+    "selectedColor": "#D81E06",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/ordering/ordering",
+        "text": "下单"
+      },
+      {
+        "pagePath": "pages/takingOrder/takingOrder",
+        "text": "接单"
+      },
+      {
+        "pagePath": "pages/ordersForUser/ordersForUser",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/ordersForRider/ordersForRider",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "主页"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

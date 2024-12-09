@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UploadController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OrderTaker</a> &gt; <a href="index.source.html" class="el_package">com.example.ordertaker.controller</a> &gt; <span class="el_source">UploadController.java</span></div><h1>UploadController.java</h1><pre class="source lang-java linenums">package com.example.ordertaker.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Tag(name = &quot;图片上传接口&quot;, description = &quot;/api/image&quot;)
+@RestController
+@RequestMapping(&quot;/api/image&quot;)
+<span class="nc" id="L22">public class UploadController {</span>
+
+    private static final String IMAGE_CLIENT_FOLDER = &quot;image/client/&quot;;
+
+    private static final String IMAGE_COURIER_FOLDER = &quot;image/courier/&quot;;
+
+    /**
+     * 上传用户头像
+     *
+     * @param file     头像图片
+     * @param clientId 用户ID
+     * @return 是否成功
+     */
+    @Parameters({
+            @Parameter(name = &quot;file&quot;, description = &quot;头像图片&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;clientId&quot;, description = &quot;用户ID&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;上传用户头像&quot;, description = &quot;上传用户头像&quot;)
+    @PostMapping(&quot;/client&quot;)
+    public String clientSingleImageUpload(@RequestParam(&quot;file&quot;) MultipartFile file,
+                                    @RequestParam(&quot;clientId&quot;) Long clientId) {
+<span class="nc" id="L43">        return singleImageUpload(file, clientId, IMAGE_CLIENT_FOLDER);</span>
+    }
+
+    /**
+     * 上传骑手头像
+     *
+     * @param file      头像图片
+     * @param courierId 骑手ID
+     * @return 是否成功
+     */
+    @Parameters({
+            @Parameter(name = &quot;file&quot;, description = &quot;头像图片&quot;, in = ParameterIn.QUERY, required = true),
+            @Parameter(name = &quot;courierId&quot;, description = &quot;骑手ID&quot;, in = ParameterIn.QUERY, required = true)
+    })
+    @Operation(summary = &quot;上传骑手头像&quot;, description = &quot;上传骑手头像&quot;)
+    @PostMapping(&quot;/courier&quot;)
+    public String courierSingleImageUpload(@RequestParam(&quot;file&quot;) MultipartFile file,
+                                           @RequestParam(&quot;courierId&quot;) Long courierId) {
+<span class="nc" id="L61">        return singleImageUpload(file, courierId, IMAGE_COURIER_FOLDER);</span>
+    }
+
+
+    /**
+     * 上传图片
+     *
+     * @param file   图片
+     * @param id     用户ID
+     * @param folder 文件夹
+     * @return 是否成功
+     */
+    public String singleImageUpload(MultipartFile file, Long id, String folder) {
+        try {
+            // Save the uploaded file to the specified directory
+<span class="nc" id="L76">            byte[] bytes = file.getBytes();</span>
+<span class="nc" id="L77">            String fileExtension = file.getOriginalFilename().split(&quot;\\.&quot;)[1];</span>
+<span class="nc" id="L78">            String filename = folder + id + &quot;.&quot; + fileExtension;</span>
+<span class="nc" id="L79">            File uploadedFile = new File(filename);</span>
+<span class="nc" id="L80">            uploadedFile.createNewFile();</span>
+<span class="nc" id="L81">            java.nio.file.Files.write(uploadedFile.toPath(), bytes);</span>
+<span class="nc" id="L82">            return filename;</span>
+<span class="nc" id="L83">        } catch (IOException e) {</span>
+<span class="nc" id="L84">            e.printStackTrace();</span>
+<span class="nc" id="L85">            return &quot;Error while uploading file&quot;;</span>
+        }
+    }
+
+
+    /**
+     * 获取用户头像
+     *
+     * @param filename 用户头像文件名
+     * @return 用户头像
+     */
+    @Parameter(name = &quot;filename&quot;, description = &quot;用户头像文件名&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取用户头像&quot;, description = &quot;获取用户头像&quot;)
+    @GetMapping(&quot;/getClientImage/{filename:.+}&quot;)
+    public ResponseEntity&lt;byte[]&gt; getClientImage(@PathVariable String filename) {
+<span class="nc" id="L100">        return getFileUtil(filename, IMAGE_CLIENT_FOLDER);</span>
+    }
+
+
+    /**
+     * 获取骑手头像
+     *
+     * @param filename 骑手头像文件名
+     * @return 骑手头像
+     */
+    @Parameter(name = &quot;filename&quot;, description = &quot;骑手头像文件名&quot;, in = ParameterIn.QUERY, required = true)
+    @Operation(summary = &quot;获取骑手头像&quot;, description = &quot;获取骑手头像&quot;)
+    @GetMapping(&quot;/getCourierImage/{filename:.+}&quot;)
+    public ResponseEntity&lt;byte[]&gt; getCourierImage(@PathVariable String filename) {
+<span class="nc" id="L114">        return getFileUtil(filename, IMAGE_COURIER_FOLDER);</span>
+    }
+
+    /**
+     * 获取图片
+     *
+     * @param filename 图片文件名
+     * @param studentPdf 图片文件夹
+     * @return 图片
+     */
+    private ResponseEntity&lt;byte[]&gt; getFileUtil(@PathVariable String filename, String studentPdf) {
+        try {
+            // Retrieve the file from the specified directory
+<span class="nc" id="L127">            Path path = Paths.get(studentPdf + filename);</span>
+<span class="nc" id="L128">            byte[] pdf = Files.readAllBytes(path);</span>
+
+            // Return the video as the response body
+<span class="nc" id="L131">            return new ResponseEntity&lt;&gt;(pdf, HttpStatus.OK);</span>
+<span class="nc" id="L132">        } catch (IOException e) {</span>
+<span class="nc" id="L133">            e.printStackTrace();</span>
+<span class="nc" id="L134">            return new ResponseEntity&lt;&gt;(null, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

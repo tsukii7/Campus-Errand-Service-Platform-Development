@@ -1,0 +1,242 @@
+/* pages/takeoutOrder/takeoutOrder.wxss */
+/* 最大的父元素 */
+.v1{
+  display: block;
+  position:absolute;
+  height: 100%;
+  width: 100%;
+  background: #356363;
+  /* 换图片 */
+
+}
+/* 白色区域 */
+.v1 .v2{
+  position: relative;
+  margin-top: 50rpx;
+  left: 50rpx; 
+  width: 645rpx;
+  height: 1100rpx;
+  background: #FFFFFF;
+  border-radius: 50rpx;
+}
+/* 白色区域内的外卖代取下单文本 */
+.v1 .v2 .dltext{
+  margin-top: 50rpx;
+  position: absolute;
+  margin-left: 170rpx;
+  width: 400rpx;
+  height: 100rpx;
+  font-size: 50rpx;
+  font-family: Helvetica;
+  color: #000000;
+  line-height: 100rpx;
+  letter-spacing: 2rpx;
+}
+/* 订单描述图片+输入框+下划线的父容器view */
+.v1 .v2 .descriptionCs{
+  margin-top: 150rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 订单描述图标 */
+.v1 .v2 .descriptionCs .ph{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 订单描述输入框 */
+.v1 .v2 .descriptionCs input{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 取货地址图片+输入框+下划线的父容器view */
+.v1 .v2 .pickupAddressCs{
+  margin-top: 250rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 取货地址图标 */
+.v1 .v2 .pickupAddressCs .pa{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 取货地址下拉框 */
+.v1 .v2 .pickupAddressCs picker{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 送餐地址图片+输入框+下划线的父容器view */
+.v1 .v2 .deliveryAddressCs{
+  margin-top: 350rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 送餐地址图标 */
+.v1 .v2 .deliveryAddressCs .pd{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 送餐地址下拉框 */
+.v1 .v2 .deliveryAddressCs picker{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 外卖预计到达图片+输入框+下划线的父容器view */
+.v1 .v2 .estimateTimeCs{
+  margin-top: 450rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 外卖预计到达图标 */
+.v1 .v2 .estimateTimeCs .pe{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 外卖预计到达下拉框 */
+.v1 .v2 .estimateTimeCs date-time-picker{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 期望到达图片+输入框+下划线的父容器view */
+.v1 .v2 .expectedTimeCs{
+  margin-top: 550rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 期望到达图标 */
+.v1 .v2 .expectedTimeCs .pe{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 期望到达下拉框 */
+.v1 .v2 .expectedTimeCs date-time-picker{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 商品价格图片+输入框+下划线的父容器view */
+.v1 .v2 .priceCs{
+  margin-top: 650rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 商品价格图标 */
+.v1 .v2 .priceCs .pp{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 商品价格输入框 */
+.v1 .v2 .priceCs input{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 餐厅图片+输入框+下划线的父容器view */
+.v1 .v2 .restaurantCs{
+  margin-top: 750rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 餐厅图标 */
+.v1 .v2 .restaurantCs .pr{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 餐厅输入框 */
+.v1 .v2 .restaurantCs input{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 费用图片+输入框+下划线的父容器view */
+.v1 .v2 .feeCs{
+  margin-top: 850rpx;
+  margin-left: 40rpx;
+  position: absolute;
+  display: flex;
+  width: 550rpx ;
+  height: 80rpx ;
+  border-bottom: 3rpx solid rgb(58, 57, 57);
+}
+/* 餐厅图标 */
+.v1 .v2 .feeCs .pf{
+  margin-top: 5rpx;
+  margin-left: 30rpx;
+  width: 55rpx;
+  height: 55rpx;
+}
+/* 餐厅输入框 */
+.v1 .v2 .feeCs input{
+  width: 450rpx;
+  font-size: 25rpx ;
+  margin-top: 15rpx;
+  margin-left: 30rpx;
+}
+
+/* 下单按钮容器view */
+.v1 .v2 .order{
+  width: 350rpx;
+  height: 50rpx;
+  position: absolute;
+  margin-top: 1000rpx;
+  margin-left: 150rpx;
+}

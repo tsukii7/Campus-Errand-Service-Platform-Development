@@ -1,0 +1,22 @@
+/* pages/takingOrder/takingOrder.wxss */
+.item {
+  width: 130rpx;
+  height: 130rpx;
+  display: inline-block;
+  text-align: center;
+  line-height: 130rpx;
+}
+
+.item.active {
+  background-color: white;
+  color: orange;
+  font-weight: bold;
+}
+
+.item.active::before {
+  content: '';
+  display: block;
+  position: relative;
+  height: 10rpx;
+  background: orange;
+}

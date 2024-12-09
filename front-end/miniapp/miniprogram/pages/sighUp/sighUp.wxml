@@ -1,0 +1,47 @@
+<view class="v1">
+ 
+ <!-- v2父容器  子view使用绝对布局 -->
+   <view class="v2">
+     <view class="dltext">注册</view>
+  
+     <!-- 昵称 -->
+      <view class="nameCs">
+       <image src="https://i.postimg.cc/wjzxbgtJ/user.png" class="ph"></image>
+       <input placeholder="请输入昵称" bindinput="onInputName"/>
+     </view>
+  
+     <!-- 邮箱 -->
+     <view class="mailboxCs">
+       <image src="https://i.postimg.cc/Nf23V4Fb/mailbox.png" class="ph"></image>
+       <input placeholder="请输入注册邮箱" bindinput="onInputMailbox"/>
+     </view>
+  
+     <!-- 密码 -->
+     <view class=passwordCs">
+       <image src="https://i.postimg.cc/4xCDT9hG/lock.png" class="ps"></image>
+       <input placeholder="请输入密码" password="{{!show}}" bindinput="onInputPassword"/>
+       <image src="{{eye_images[show]}}" class="eye" bindtap="switchPasswordDisplay"></image>
+     </view>
+  
+      <!-- 确认密码 -->
+      <view class=passwordCs2">
+        <image src="https://i.postimg.cc/4xCDT9hG/lock.png" class="ps"></image>
+        <input placeholder="确认密码" password="{{!show}}" bindinput="onInputPassword2"/>
+        <image src="{{equal_images[is_equal]}}" class="eye" bindtap="switchPasswordDisplay"></image>
+      </view>
+    
+      <!-- 注册按钮 -->
+      <view class="denglu">
+        <button class="btn-dl" type="primary" style="width: 350rpx; height: 68rpx; display: flex; box-sizing: border-box; left: 0rpx; top: -43rpx; position: relative; align-items: center; justify-content: center" bindtap="signUp">注册</button>
+      </view>
+
+      <!-- 单选框 -->
+      <radio-group bindchange="radioChange" style="width: 544rpx; height: 80rpx; display: block; box-sizing: border-box; position: relative; left: 0rpx; top: 550rpx">
+        <label class="radio" wx:for="{{radios}}" wx:key="index" style="position: relative; left: 82rpx; top: 18rpx; padding: 15rpx"><radio value="{{item.type}}" data-id="{{item.key}}" checked="{{item.checked}}"/>
+          {{item.type}}
+        </label>
+      </radio-group>
+  </view>
+  
+ </view>
+  
